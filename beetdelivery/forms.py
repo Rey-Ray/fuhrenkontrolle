@@ -1,5 +1,5 @@
 from django import forms
-from .models import Farmer, Driver, Station, Schedule, Transportation, YearlyStationExport, YearlyHillStationDistance
+from .models import Farmer, Driver, Station, Schedule, Transportation, YearlyStationExport, YearlyHillStationDistance, YearlyGasCharge
 import datetime
 
 class DateStationForm(forms.Form):
@@ -38,12 +38,12 @@ class YearForm(forms.Form):
         empty_value=None,
         widget=forms.Select
     )
-    gas_charge = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'small-input'}))
-    def clean_gas_charge(self):
-        gas_charge = self.cleaned_data.get('gas_charge')
-        if gas_charge < -99 or gas_charge > 99:
-            raise forms.ValidationError("gas_charge must be between -99 and 99.")
-        return gas_charge
+    # gas_charge = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'small-input'}))
+    # def clean_gas_charge(self):
+    #     gas_charge = self.cleaned_data.get('gas_charge')
+    #     if gas_charge < -99 or gas_charge > 99:
+    #         raise forms.ValidationError("gas_charge must be between -99 and 99.")
+    #     return gas_charge
 
     # class Meta:
     #     model = Year
@@ -52,7 +52,7 @@ class YearForm(forms.Form):
     # #gas_charge = forms.FloatField()
 
 class YearlyDistancePriceForm(forms.Form):
-    for i in range(1, 71):
+    for i in range(1, 4):
         locals()['distance_' + str(i)] = forms.CharField(label=str(i), max_length=100)
 
 class YearlyStationExportForm(forms.ModelForm):
@@ -86,3 +86,6 @@ class YearlyHillStationDistanceForm(forms.ModelForm):
         self.fields['hill'].disabled = True
 
 YearlyHillStationDistanceFormset = forms.modelformset_factory(YearlyHillStationDistance, form=YearlyHillStationDistanceForm, extra=0)
+
+class YearlyGasChargeForm(forms.Form):
+    gas_charge = forms.FloatField()

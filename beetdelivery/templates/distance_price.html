@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <form method="post" action="{% url 'distance_price' year %}">
     {% csrf_token %}
 
@@ -15,3 +18,4 @@
     </table>
 <button type="submit">Save</button>
 </form>
+{% endblock %}

@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <form method="post">
     {% csrf_token %}
     {{ formset.management_form }}
@@ -17,3 +21,5 @@
     </table>
     <input type="submit" value="Save">
 </form>
+
+{% endblock %}

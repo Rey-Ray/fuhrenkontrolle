@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="post" action="{% url 'gas_charge' year %}">
+    {% csrf_token %}
+    {{ year }}
+    {{ form.as_p }}
+<button type="submit">Save</button>
+</form>
+
+{% endblock %}

@@ -80,20 +80,20 @@ class Transportation(models.Model):
 
 class YearlyGasCharge(models.Model):
     year = models.IntegerField(unique=True, default=2023)
-    gas_charge = models.IntegerField(choices=[(r,r) for r in range(-99, 100)])
+    gas_charge = models.FloatField(choices=[(r,r) for r in range(-99, 100)])
     def __str__(self):
         return f'{self.year} {self.gas_charge}'
 
 
 class YearlyStationExport(models.Model):
-    year = models.IntegerField(unique=True, default=2023)
+    year = models.IntegerField(default=2023)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     total_tons = models.FloatField(default=0)
     density = models.FloatField(default=0)
 
 
 class YearlyDistancePrice(models.Model):
-    year = models.IntegerField(unique=True, default=2023)
+    year = models.IntegerField(default=2023)
     distance = models.IntegerField(default=0)
     price = models.FloatField(default=0)
     def __str__(self):
@@ -101,8 +101,8 @@ class YearlyDistancePrice(models.Model):
 
 
 class YearlyHillStationDistance(models.Model):
-    year = models.IntegerField(unique=True, default=2023)
-    station = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True)
+    year = models.IntegerField(default=2023)
+    # station = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
     distance = models.IntegerField(default=0)    
     def __str__(self):

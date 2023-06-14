@@ -11,9 +11,9 @@ urlpatterns = [
     path('schedule/<daily_id>/', views.schedule_view, name='schedule'),
     path('manager/schedule/selection/', views.manager_schedules_view, name='manager_schedule_selection'),
     path('parameter/', views.parameter_view, name='parameter'),
-    #path('choose-year/', views.choose_year_view, name='choose_year'),    
+    path('gas-charge/<year>/', views.gas_charge_view, name='gas_charge'),    
     path('distance-price/<year>/', views.distance_price_view, name='distance_price'),
     path('stations-exports/<year>/', views.stations_exports_view, name='stations_exports'),
     path('hill-distance/<year>/', views.hill_station_distance_view, name='hill_distance'),
-
+    path('receipt/', views.receipt_view, name='receipt')
 ]
