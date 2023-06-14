@@ -1,0 +1,17 @@
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <table>
+        <thead>
+            <th>Hill</th>
+            <th>Distance (km)</th>
+        </thead>
+    {% for form in formset %}
+            <tr>
+                <td class="small-input">{{ form.hill }}</td>
+                <td class="small-input">{{ form.distance }}</td>
+            </tr>
+    {% endfor %}
+    </table>
+    <input type="submit" value="Save">
+</form>

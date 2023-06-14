@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <!DOCTYPE html>
+<html>
+  <head>
+      <title>{% block title %}Beet Delivery{% endblock %}</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+      <style>
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* min-height: 100vh; */
+            text-align: center;
+        }
+
+        .padded-nav {
+          padding-left: 40px;
+          padding-right: 100px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-field {
+            display: flex;
+            align-items: center;
+            margin: 0 20px;
+        }  
+        
+        .small-input {
+          width: 50px; /* Adjust as needed */
+        }
+
+      </style>
+      {% block styles %}{% endblock %}
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container center-content">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- Navigation bar content -->
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'home' %}" target="_self" class="nav-link w-100 text-center">Fuherenkontrolle</a></li>
+            <li class="nav-item flex-grow-1 padded-nav"><a class="nav-link w-100 text-center">{{ current_time }}</a></li>
+            {% if request.user.is_authenticated %}
+              {% if request.is_manager %}
+                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'manager_schedule_selection' %}" class="nav-link w-100 text-center">Tageslisten</a></li>
+                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center">Abrechnungen</a></li>
+                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center">Parameter</a></li>
+
+              {% endif %}
+            {% endif %}
+            <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'logout' %}" class="nav-link w-100 text-center">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+  <div class="container mt-4 center-content">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% block content %} {% endblock %}
+  </div>
+
+  <footer class="footer mt-auto py-3 bg-light">
+      <!-- Footer content -->
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% block scripts %}{% endblock %}
+
+    <!-- Add the content of your page here -->
+    
+  </body>
+</html>

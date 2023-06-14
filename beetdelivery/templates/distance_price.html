@@ -1,0 +1,17 @@
+<form method="post" action="{% url 'distance_price' year %}">
+    {% csrf_token %}
+
+    <table>
+        <thead>
+            <th>Distance</th>
+            <th>Price (CHF/t)</th>
+        </thead>
+        {% for field in distance_price_form %}
+            <tr>
+                <td>{{field.label_tag}}</td>
+                <td>{{ field }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+<button type="submit">Save</button>
+</form>

@@ -1,0 +1,19 @@
+<form method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <table>
+        <thead>
+            <th>Station</th>
+            <th>Total tons</th>
+            <th>Density</th>
+        </thead>
+    {% for form in formset %}
+            <tr>
+                <td class="small-input">{{ form.station }}</td>
+                <td class="small-input">{{ form.total_tons }}</td>
+                <td class="small-input">{{ form.density }}</td>
+            </tr>
+    {% endfor %}
+    </table>
+    <input type="submit" value="Save">
+</form>

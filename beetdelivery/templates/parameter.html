@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    <style>
+        #distance_price_div, #stations_exports_div {
+        display: none;
+        width: 50%;
+        vertical-align: top;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-field">
+            {{ form.year.label_tag }} <div id="form_select_year">{{ form.year }}</div>
+            <div id="selected_year" style="display:none">{{ year }}</div>
+        </div>        
+        <div class="form-field">
+            {{ form.gas_charge.label_tag }} {{ form.gas_charge }}
+            {% if form.gas_charge.errors %}
+                <div class="alert alert-danger">
+                    {{ form.gas_charge.errors }}
+                </div>
+            {% endif %}    
+        </div>
+    </div>
+    <button type="submit">Save</button>
+</form>
+
+<div class="left-side"> 
+    <!-- {{ year }} -->
+    <button id="distance_price_button">Distance Price</button>
+    <button id="stations_exports_button">Station Export</button>
+    <button id="hill_distance_button">Distances</button>
+</div>
+<div class="row">
+    <div class="mt-4 center-content" id="distance_price_div"></div>
+    <div class="mt-4 center-content" id="stations_exports_div"></div>
+    <div class="mt-4 center-content" id="hill_distance_div"></div>
+</div>
+
+{% endblock %} 
+
+
+{% block scripts %}
+<script>
+    // Obtain the button elements
+    var distancePriceButton = document.getElementById('distance_price_button');
+    var stationsExportsButton = document.getElementById('stations_exports_button');
+    var hillDistanceButton = document.getElementById('hill_distance_button');
+    var saveButton = document.getElementById('save_button');
+
+    // Obtain the form container
+    var formContainer = document.getElementById('form_container');
+    var distancePriceFormContainer = document.getElementById('distance_price_div')
+    var stationsExportsFormContainer = document.getElementById('stations_exports_div')
+    var hillDistanceFormContainer = document.getElementById('hill_distance_div')
+
+    distancePriceButton.addEventListener('click', function(event) {
+    // Prevent form from being submitted
+        event.preventDefault();
+
+        var selected_year = document.getElementById('selected_year').innerText;
+
+        // Check if stationsExportsFormContainer is already displayed
+        if (distancePriceFormContainer.style.display === 'block') {
+            // If it's already displayed, hide it
+            distancePriceFormContainer.style.display = 'none';
+            saveButton.style.display = 'none';
+        } else {
+            // If it's not displayed, fetch the data and show it
+            fetch("/distance-price/"+selected_year+"/")
+                .then(response => response.text())
+                .then(data => {
+                    distancePriceFormContainer.innerHTML = data;
+                    distancePriceFormContainer.style.display = 'block';
+                    saveButton.style.display = 'block';
+                });
+        }
+    });
+
+    stationsExportsButton.addEventListener('click', function(event) {
+        // Prevent form from being submitted
+        event.preventDefault();
+
+        var selected_year = document.getElementById('selected_year').innerText;
+
+        // Check if stationsExportsFormContainer is already displayed
+        if (stationsExportsFormContainer.style.display === 'block') {
+            // If it's already displayed, hide it
+            stationsExportsFormContainer.style.display = 'none';
+            saveButton.style.display = 'none';
+        } else {
+            // If it's not displayed, fetch the data and show it
+            fetch("/stations-exports/"+selected_year+"/")
+                .then(response => response.text())
+                .then(data => {
+                    stationsExportsFormContainer.innerHTML = data;
+                    stationsExportsFormContainer.style.display = 'block';
+                    saveButton.style.display = 'block';
+                });
+        }
+    });
+
+    hillDistanceButton.addEventListener('click', function(event) {
+    // Prevent form from being submitted
+        event.preventDefault();
+
+        var selected_year = document.getElementById('selected_year').innerText;
+
+        // Check if stationsExportsFormContainer is already displayed
+        if (hillDistanceFormContainer.style.display === 'block') {
+            // If it's already displayed, hide it
+            hillDistanceFormContainer.style.display = 'none';
+            saveButton.style.display = 'none';
+        } else {
+            // If it's not displayed, fetch the data and show it
+            fetch("/hill-distance/"+selected_year+"/")
+                .then(response => response.text())
+                .then(data => {
+                    hillDistanceFormContainer.innerHTML = data;
+                    hillDistanceFormContainer.style.display = 'block';
+                    saveButton.style.display = 'block';
+                });
+        }
+    });
+
+
+    saveButton.addEventListener('click', function(event) {
+        // Prevent form from being submitted
+        event.preventDefault();
+
+        // Here you should implement logic to send the data to your server
+        // For example, you could use the fetch API to send the data using AJAX
+    });
+</script>
+
+{% endblock %} 
+
+ 

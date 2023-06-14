@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+<!-- {% load custom_tags %} -->
+
+{% block content %}
+
+<style>
+    .form-row {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    td {
+        padding: 10px;
+    }
+
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Station</th>
+            <th>Ratte</th>            
+        </tr>
+    </thead>
+    <tbody>
+        {% for sch in schedules %}
+            {% for daily in sch %}
+                <tr>
+                    <td>{{ daily.date }}</td>
+                    <td>{{ sch.station }}</td>
+                    <td><a href="{% url 'schedule' daily_id=daily.id %}"> > </a></td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
