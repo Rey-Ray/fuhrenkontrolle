@@ -1,5 +1,5 @@
 from django import forms
-from .models import Farmer, Driver, Station, Schedule, Transportation, YearlyStationExport, YearlyHillStationDistance, YearlyGasCharge
+from .models import Farmer, Driver, Station, Schedule, Transportation, YearlyStationExport, YearlyHillStationDistance, YearlyGasCharge, YearlyDistancePrice, Hill
 import datetime
 
 class DateStationForm(forms.Form):
@@ -33,59 +33,38 @@ class ScheduleForm(forms.Form):
 
 class YearForm(forms.Form):
     year = forms.TypedChoiceField(
-        choices=[(str(year), str(year)) for year in range(2023, 2050)],  # Example: range from 2000 to 2050
+        choices=[(str(year), str(year)) for year in range(2023, 2050)],
         coerce=int,
         empty_value=None,
         widget=forms.Select
     )
-    # gas_charge = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'small-input'}))
-    # def clean_gas_charge(self):
-    #     gas_charge = self.cleaned_data.get('gas_charge')
-    #     if gas_charge < -99 or gas_charge > 99:
-    #         raise forms.ValidationError("gas_charge must be between -99 and 99.")
-    #     return gas_charge
 
-    # class Meta:
-    #     model = Year
-    #     fields = ['year', 'gas_charge']
-    # #year = forms.ChoiceField()
-    # #gas_charge = forms.FloatField()
-
-class YearlyDistancePriceForm(forms.Form):
-    for i in range(1, 4):
-        locals()['distance_' + str(i)] = forms.CharField(label=str(i), max_length=100)
-
-class YearlyStationExportForm(forms.ModelForm):
-    class Meta:
-        model = YearlyStationExport
-        fields = ['total_tons', 'density', 'station']
-        # widgets = {
-        #     'total_tons': forms.NumberInput(attrs={'class': 'small-input'}),
-        #     'density': forms.NumberInput(attrs={'class': 'small-input'}),
-        #     # 'station': forms.Textarea()
-        # }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['station'].disabled = True
-
-YearlyStationExportFormset = forms.modelformset_factory(YearlyStationExport, form=YearlyStationExportForm, extra=0)
-
-class YearlyHillStationDistanceForm(forms.ModelForm):
-    class Meta:
-        model = YearlyHillStationDistance
-        fields = ['hill', 'distance']
-        # widgets = {
-        #     'total_tons': forms.NumberInput(attrs={'class': 'small-input'}),
-        #     'density': forms.NumberInput(attrs={'class': 'small-input'}),
-        #     # 'station': forms.Textarea()
-        # }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['hill'].disabled = True
-
-YearlyHillStationDistanceFormset = forms.modelformset_factory(YearlyHillStationDistance, form=YearlyHillStationDistanceForm, extra=0)
 
 class YearlyGasChargeForm(forms.Form):
     gas_charge = forms.FloatField()
+
+
+class YearlyDistancePriceForm(forms.Form):
+        distance = forms.IntegerField()
+        price = forms.FloatField()
+
+
+class YearlyStationExportForm(forms.Form):
+        station = forms.ModelChoiceField(queryset=Station.objects.all())
+        export = forms.FloatField()
+        density = forms.FloatField()
+
+
+class YearlyHillStationDistanceForm(forms.Form):
+        hill = forms.ModelChoiceField(queryset=Hill.objects.all())
+        distance = forms.FloatField()
+
+
+class ReceiptForm(forms.Form):
+    driver = forms.ModelChoiceField(queryset=Driver.objects.all())
+    year = forms.TypedChoiceField(
+        choices=[(str(year), str(year)) for year in range(2023, 2050)],
+        coerce=int,
+        empty_value=None,
+        widget=forms.Select
+    )

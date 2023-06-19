@@ -1,21 +1,61 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<form method="post" action="{% url 'distance_price' year %}">
-    {% csrf_token %}
+{% block styles %}
+<style>
+    .form-row {
+        display: inline-block;
+        margin-right: 10px;
+    }
 
-    <table>
-        <thead>
-            <th>Distance</th>
-            <th>Price (CHF/t)</th>
-        </thead>
-        {% for field in distance_price_form %}
-            <tr>
-                <td>{{field.label_tag}}</td>
-                <td>{{ field }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-<button type="submit">Save</button>
+    th {
+        padding-top: 25px;
+        padding-bottom: 10px;
+    }
+
+    td {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .save_form {
+        padding-top: 25px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" method="POST" class="save_form">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-row">
+        {{ field.label_tag }} {{ field }} {{ field.errors }}
+        </div>
+    {% endfor %}
+    <input type="submit" value="Save">
 </form>
+<!-- 
+<form action="{% url 'save_schedule' %}" method="POST" class="save_form">
+    {% csrf_token %}
+    <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+    <input type="submit" value="Save and Close">
+</form> -->
+<table>
+    <thead>
+        <tr>
+            <th>Distance(km)</th>
+            <th>Price(CHF)</th>            
+        </tr>
+    </thead>
+    <tbody>
+        {% for dp in all_dp %}
+        <tr>
+            <td>{{ dp.distance }}</td>
+            <td>{{ dp.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

@@ -1,6 +1,5 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-  <!DOCTYPE html>
 <html>
   <head>
       <title>{% block title %}Beet Delivery{% endblock %}</title>
@@ -9,15 +8,17 @@
         .center-content {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            /* min-height: 100vh; */
+            /* align-items: center; */
+            /* justify-content: center; */
+            min-height: 6vh;
             text-align: center;
         }
 
-        .padded-nav {
-          padding-left: 40px;
-          padding-right: 100px;
+        @media (max-width: 768px) {
+          .navbar-nav .nav-item {
+            flex-grow: 1;
+            text-align: center;
+          }
         }
 
         .form-row {
@@ -28,7 +29,7 @@
         .form-field {
             display: flex;
             align-items: center;
-            margin: 0 20px;
+            margin: 0 auto;
         }  
         
         .small-input {
@@ -42,22 +43,19 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container center-content">
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <!-- Navigation bar content -->
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'home' %}" target="_self" class="nav-link w-100 text-center">Fuherenkontrolle</a></li>
-            <li class="nav-item flex-grow-1 padded-nav"><a class="nav-link w-100 text-center">{{ current_time }}</a></li>
-            {% if request.user.is_authenticated %}
-              {% if request.is_manager %}
-                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'manager_schedule_selection' %}" class="nav-link w-100 text-center">Tageslisten</a></li>
-                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'receipt' %}" class="nav-link w-100 text-center">Abrechnungen</a></li>
-                <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center">Parameter</a></li>
+        <ul class="navbar-nav ml-auto d-flex flex-wrap">
+          <li class="nav-item"><a href="{% url 'home' %}" target="_self" class="nav-link">Fuherenkontrolle</a></li>
+          <!-- <li class="nav-item flex-grow-1 padded-nav"><a class="nav-link w-100 text-center">{{ current_time }}</a></li> -->
+          {% if request.user.is_authenticated %}
+            {% if request.is_manager %}
+              <li class="nav-item"><a href="{% url 'manager_schedule_selection' %}" class="nav-link">Tageslisten</a></li>
+              <li class="nav-item"><a href="{% url 'receipt' %}" class="nav-link">Abrechnungen</a></li>
+              <li class="nav-item"><a href="{% if year %} {% url 'parameter_year' year %} {% else %} {% url 'parameter' %} {% endif %}" class="nav-link w-100 text-center">Parameter</a></li>
 
-              {% endif %}
             {% endif %}
-            <li class="nav-item flex-grow-1 padded-nav"><a href="{% url 'logout' %}" class="nav-link w-100 text-center">Logout</a></li>
-          </ul>
-        </div>
+          {% endif %}
+          <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link w-100 text-center">Logout</a></li>
+        </ul>
       </div>
     </nav>
 
@@ -76,8 +74,11 @@
       <!-- Footer content -->
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="{% static 'formset_js_improved/jquery.formset.js' %}"></script> -->
+
   {% block scripts %}{% endblock %}
 
     <!-- Add the content of your page here -->

@@ -72,12 +72,12 @@ class Transportation(models.Model):
     ratte = models.ForeignKey(User, on_delete=models.CASCADE)
     # date = models.DateField()
     daily_schedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
-    arrival_time = models.TimeField(default=datetime.now)
-    container_size = models.IntegerField(null=True, blank = True)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
+    arrival_time = models.TimeField(default=datetime.now)
+    container_size = models.IntegerField(null=True, blank = True)
     saved = models.BooleanField(default=False)
-
+    
 class YearlyGasCharge(models.Model):
     year = models.IntegerField(unique=True, default=2023)
     gas_charge = models.FloatField(choices=[(r,r) for r in range(-99, 100)])

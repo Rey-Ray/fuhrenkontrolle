@@ -25,11 +25,13 @@
         </tr>
     </thead>
     <tbody>
+        <!-- schedules is like this: [[daily1, daily2], [daily3]] -->
         {% for sch in schedules %}
             {% for daily in sch %}
                 <tr>
                     <td>{{ daily.date }}</td>
-                    <td>{{ sch.station }}</td>
+                    <td>{{ daily.schedule.station }}</td>
+                    <td>{{ daily.transportation_set.first.ratte }}</td>
                     <td><a href="{% url 'schedule' daily_id=daily.id %}"> > </a></td>
                 </tr>
             {% endfor %}
@@ -38,4 +40,3 @@
 </table>
 
 {% endblock %}
-

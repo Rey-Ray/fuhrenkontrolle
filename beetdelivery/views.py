@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import DateStationForm, ScheduleForm, TransportationForm, YearlyDistancePriceForm, YearlyStationExportFormset, YearlyStationExportForm, YearlyHillStationDistanceFormset, YearForm, YearlyGasChargeForm
+from .forms import DateStationForm, ScheduleForm, TransportationForm, YearlyDistancePriceForm, YearlyStationExportForm, YearForm, YearlyGasChargeForm, YearlyHillStationDistanceForm, ReceiptForm
 from .models import Driver, Farmer, Hill, Schedule, Station, Transportation, YearlyDistancePrice, YearlyStationExport, YearlyHillStationDistance, DailySchedule, YearlyGasCharge
 from .decorators import manager_required, set_role
 
@@ -37,6 +37,9 @@ def logout_view(request):
 def manager_schedules_view(request):
     schedules = Schedule.objects.all()
     daily_schedules = [sch.dailyschedule_set.all() for sch in schedules]
+    for x in daily_schedules:
+        print(x[0].transportation_set.all())
+    print('...........................',schedules[0].station)
     return render(request, 'manager_schedules.html', {'schedules':daily_schedules})
 
 
@@ -62,7 +65,6 @@ def schedule_selection_view(request):
                 daily_obj.pending = True
                 daily_obj.save()
             except Schedule.DoesNotExist:
-                # print("Could not find schedule")
                 messages.error(request, "No hills are planned to be transfered to this station in this year!")
                 return redirect('schedule_selection')
 
@@ -86,9 +88,7 @@ def schedule_view(request, daily_id):
     else:
         form = TransportationForm(daily_schedule=daily_obj)
 
-    transportations = Transportation.objects.filter(daily_schedule=daily_id).all()
-    # TransportationFormSet = modelformset_factory(Transportation, form=TransportationForm, extra=0)
-    
+    transportations = Transportation.objects.filter(daily_schedule=daily_id).all()    
     context = {
         'form': form,
         'transportations': transportations,
@@ -109,99 +109,90 @@ def save_schedule_view(request):
 @manager_required
 @set_role
 def parameter_view(request):
-    year = datetime.datetime.now().year
-    user = request.user
-    #numbers = range(1,71)
     if request.method == 'POST':
         form = YearForm(request.POST)
         if form.is_valid():
             year = form.cleaned_data['year']
-            gas_charge = form.cleaned_data['gas_charge']
-            
-            # Check if a Year instance already exists with the given year
-            yearly_gas_charge = YearlyGasCharge.objects.filter(year=year).first()
-            
-            if yearly_gas_charge:
-                yearly_gas_charge.gas_charge = gas_charge
-                yearly_gas_charge.save()
-            else:
-                YearlyGasCharge.objects.create(year=year, gas_charge=gas_charge)
-            
-            # return redirect('parameter')
-        else:
-            print(form.errors)
-            # form = 
+            return redirect('parameter_year', year=year)
     else:
         form = YearForm()
-    
-    return render(request, 'parameter.html', {'form':form, 'year': year})
-    #return render(request, 'parameter.html', {'year': 2023, 'numbers':numbers, 'is_manager': is_manager})
+    return render(request, 'parameter.html', {'form':form})
+
+@manager_required
+@set_role
+def parameter_year_view(request, year):
+    form = YearForm(initial={'year': year})
+    return render(request, 'parameter.html', {'form': form, 'year': year})
+
 
 @manager_required
 @set_role
 def distance_price_view(request, year):
-    if request.method == "POST":
-        distance_price_form = YearlyDistancePriceForm(request.POST)
-        if distance_price_form.is_valid():
-            for f in distance_price_form.cleaned_data.keys():
-                if f.startswith('distance'):
-                    price = distance_price_form.cleaned_data[f]
-                    km = f.split('_')[-1]
-                    try:
-                        ydp = YearlyDistancePrice.objects.get(distance=km, year=year)
-                        ydp.price = price
-                        ydp.save()
-                    except:
-                        YearlyDistancePrice.objects.create(distance=km, price=price, year=year)
-
-            return redirect('parameter')    
+    if request.method == 'POST':
+        form = YearlyDistancePriceForm(request.POST)
+        if form.is_valid():
+            distance = form.cleaned_data['distance']
+            price = form.cleaned_data['price']
+            try:
+                ydp_obj = YearlyDistancePrice.objects.get(year=year, distance=distance)
+                # if ydp_obj:
+                ydp_obj.price = price
+                ydp_obj.save()
+                # messages.info(request, f"Gas charge for {year} is set to {charge}")
+            except:
+                YearlyDistancePrice.objects.create(year=year, distance=distance, price=price)
+            # return redirect('schedule', daily_id=daily_id)
     else:
-        distance_price_form = YearlyDistancePriceForm()
+        form = YearlyDistancePriceForm()
 
-    return render(request, 'distance_price.html', {'distance_price_form': distance_price_form, 'year': year})
+    all_distance_price = YearlyDistancePrice.objects.filter(year=year).order_by('distance')
+
+    context = {
+        'form': form,
+        'all_dp': all_distance_price
+        }
+    return render(request, 'distance_price.html', context)
 
 @manager_required
 @set_role
 def stations_exports_view(request, year):
-    stations_exports = YearlyStationExport.objects.filter(year=year)
     if request.method == "POST":
-        formset = YearlyStationExportFormset(request.POST, queryset=stations_exports)
-        for i, form in enumerate(formset.forms):
-            print(dir(form))
-        if formset.is_valid():
-            formset.save()
-            return redirect('parameter')
-        else:
-            print('llllllllllllll', formset.errors)
+        form = YearlyStationExportForm(request.POST)
+        if form.is_valid():
+            station = form.cleaned_data['station']
+            export = form.cleaned_data['export']
+            density = form.cleaned_data['density']
+            try:
+                yse_obj = YearlyStationExport.objects.get(year=year, station=station)
+                yse_obj.density = density
+                yse_obj.total_tons = export
+                yse_obj.save()
+            except:
+                YearlyStationExport.objects.create(year=year, station=station, total_tons=export, density=density)
     else:
-        stations = Station.objects.all()
-        for station in stations:
-            YearlyStationExport.objects.get_or_create(year=year, station=station)
-
-
-        formset = YearlyStationExportFormset(queryset=stations_exports)
-
-    return render(request, "stations_exports.html", {'formset': formset})
+        form = YearlyStationExportForm()
+    all_se = YearlyStationExport.objects.filter(year=year).order_by('station')
+    return render(request, "stations_exports.html", {'form': form, 'all_se': all_se})
 
 @manager_required
 @set_role
 def hill_station_distance_view(request, year):
-    hill_distance = YearlyHillStationDistance.objects.filter(year=year)  # replace "your_conditions" with your actual conditions
     if request.method == "POST":
-        formset = YearlyHillStationDistanceFormset(request.POST, queryset=hill_distance)
-        if formset.is_valid():
-            formset.save()
-            print("-------- VALID FORM")
-            return redirect('parameter')
+        form = YearlyHillStationDistanceForm(request.POST)
+        if form.is_valid():
+            hill = form.cleaned_data['hill']
+            distance = form.cleaned_data['distance']
+            try:
+                yhd_obj = YearlyHillStationDistance.objects.get(year=year, hill=hill)
+                yhd_obj.distance = distance
+                yhd_obj.hill = hill
+                yhd_obj.save()
+            except:
+                YearlyHillStationDistance.objects.create(year=year, hill=hill, distance=distance)
     else:
-        hills = Hill.objects.all()
-        for hill in hills:
-            YearlyHillStationDistance.objects.get_or_create(year=year, hill=hill)
-
-
-        formset = YearlyHillStationDistanceFormset(queryset=hill_distance)
-
-    return render(request, "hill_distance.html", {'formset': formset})
+        form = YearlyHillStationDistanceForm()
+    all_hsd = YearlyHillStationDistance.objects.filter(year=year)#.order_by('hill')
+    return render(request, "hill_distance.html", {'form': form, 'all_hsd': all_hsd})
 
 @manager_required
 @set_role
@@ -211,13 +202,14 @@ def gas_charge_view(request, year):
         form = YearlyGasChargeForm(request.POST)
         if form.is_valid():
             charge = form.cleaned_data['gas_charge']
-            gas_charge = YearlyGasCharge.objects.get(year=year)
-            if gas_charge:
+            try:
+                gas_charge = YearlyGasCharge.objects.get(year=year)
                 gas_charge.gas_charge = charge
                 gas_charge.save()
-            else:
+                messages.info(request, f"Gas charge for {year} is set to {charge}")
+            except:
                 YearlyGasCharge.objects.create(year=year, gas_charge=charge)
-            return redirect('parameter')
+            return redirect('parameter_year', year=year)
     else:
         form = YearlyGasChargeForm()
 
@@ -226,66 +218,51 @@ def gas_charge_view(request, year):
 @manager_required
 @set_role
 def receipt_view(request):
-    return render(request, 'receipt.html')
+    if request.method == "POST":
+        form = ReceiptForm(request.POST)
+        if form.is_valid():
+            year = form.cleaned_data['year']
+            driver = form.cleaned_data['driver']
 
-#     if request.method == "POST":
-#         station_export_form = YearlyStationExportForm(request.POST)
-#         print('yoooooooooo')
-#         if distance_price_form.is_valid():
-#             yearly_charge = Year.objects.get(year=datetime.date(2023,1,1))
-#             if not yearly_charge:
-#                 yearly_charge = Year(year=datetime.datetime(2023,1,1), gas_charge=6)
-#             print("holaaaaaaaaaaaaa")
-#             for f in station_export_form.cleaned_data.keys():
-#                 print(f)
-#                 if f.startswith('distance'):
-#                     print('heeyyyyaaa')
-#                     price = station_export_form.cleaned_data[f]
-#                     km = f.split('_')[-1]
-#                     ydp = YearlyDistancePrice(distance=km, price=price, yearly_charge=yearly_charge)
-#                     ydp.save()
-                    
-#         return redirect('parameter')    
-#     else:
-#         distance_price_form = YearlyDistancePriceForm()
+            driver_trps = Transportation.objects.filter(driver=driver, daily_schedule__schedule__year=year)
+            try:
+                gas_charge = YearlyGasCharge.objects.get(year=year)
+            except:
+                messages.info(request, f"Please in parameter page, enter the Gas charge for the year {year} if it is not zero.")    
+                return redirect('reciept')
+            total_price = 0
+            prices = []
+            for trp in driver_trps:
+                #transfered Kg:
+                trp_station = trp.daily_schedule.schedule.station
+                try:
+                    yse_obj = YearlyStationExport.objects.get(year=year, station=trp_station)
+                except:
+                    messages.info(request, f"Please in parameter page, enter yearly station export.")    
+                    return redirect('reciept')
+                try:
+                    hsd_obj = YearlyHillStationDistance.objects.get(year=year, hill=trp.hill)
+                except:
+                    messages.info(request, f"Please in parameter page, for the hill {trp.hill}, enter the distance to the related station.")    
+                    return redirect('reciept')
+                try:
+                    ydp_obj = YearlyDistancePrice.objects.get(year=year, distance=hsd_obj.distance)
+                except:
+                    messages.info(request, f"Please in parameter page, set distance.")
+                
+                    return redirect('receipt')
+                print(ydp_obj.price)
+                print(yse_obj.density)
+                print(trp.container_size)
+                trp_price = ydp_obj.price*yse_obj.density*trp.container_size
+                total_price += trp_price
+                prices.append( (trp.hill, hsd_obj.distance, ydp_obj.price, yse_obj.density, trp.container_size, trp_price) )
+                print(f"Transportation price: {trp_price}")
+            gas_tax = total_price*gas_charge.gas_charge
+            final_price = gas_tax*total_price
+            return render(request, "receipt.html", {'form': form, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
+    else:
+        form = ReceiptForm()
+    return render(request, "receipt.html", {'form': form})#, 'driver_trp':driver_trps})
 
-#     return render(request, 'distance_prices.html', {'distance_price_form': distance_price_form})
 
-# @login_required
-# def yearly_charges_view(request):
-#     user = request.user
-#     if not hasattr(user, 'manager'):
-#         return redirect('schedule_selection')
-#     is_manager = True
-
-#     if request.method == 'POST':
-#         yearly_form = YearlyForm(request.POST)
-#     else:
-#         pass
-
-#     return render(request, 'parameter.html', {'yearly_form': yearly_form})
-            
-
-# def choose_year_view(request):
-#     if request.method == 'POST':
-#         form = YearForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('parameter')
-#     else:
-#         form = YearForm()
-    
-#     return render(request, 'choose_year_view.html', {'form':form})
-# @login_required
-# def get_recipt_view(request, driver_id):
-#     user = request.user
-#     if not hasattr(user, 'manager'):
-#         return redirect('schedule_selection')
-#     is_manager = True
-    
-#     driver = Driver.objects.get(id=driver_id)
-#     transportations = driver.transportations.all()
-#     recipt = {}
-#     for t in transportations:
-#         distance = t.distance_price.distance
-#         price = t.distance_price.price
