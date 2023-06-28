@@ -248,13 +248,9 @@ def receipt_view(request):
                     messages.info(request, f"Please in parameter page, set distance.")
                 
                     return redirect('receipt')
-                print(ydp_obj.price)
-                print(yse_obj.density)
-                print(trp.container_size)
                 trp_price = ydp_obj.price*yse_obj.density*trp.container_size
                 total_price += trp_price
                 prices.append( (trp.hill, hsd_obj.distance, ydp_obj.price, yse_obj.density, trp.container_size, trp_price) )
-                print(f"Transportation price: {trp_price}")
             gas_tax = total_price*gas_charge.gas_charge
             final_price = gas_tax*total_price
             return render(request, "receipt.html", {'form': form, 'driver': driver, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
