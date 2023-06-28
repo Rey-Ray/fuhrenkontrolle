@@ -37,9 +37,6 @@ def logout_view(request):
 def manager_schedules_view(request):
     schedules = Schedule.objects.all()
     daily_schedules = [sch.dailyschedule_set.all() for sch in schedules]
-    for x in daily_schedules:
-        print(x[0].transportation_set.all())
-    print('...........................',schedules[0].station)
     return render(request, 'manager_schedules.html', {'schedules':daily_schedules})
 
 
@@ -229,7 +226,7 @@ def receipt_view(request):
                 gas_charge = YearlyGasCharge.objects.get(year=year)
             except:
                 messages.info(request, f"Please in parameter page, enter the Gas charge for the year {year} if it is not zero.")    
-                return redirect('reciept')
+                return redirect('receipt')
             total_price = 0
             prices = []
             for trp in driver_trps:
@@ -239,12 +236,12 @@ def receipt_view(request):
                     yse_obj = YearlyStationExport.objects.get(year=year, station=trp_station)
                 except:
                     messages.info(request, f"Please in parameter page, enter yearly station export.")    
-                    return redirect('reciept')
+                    return redirect('receipt')
                 try:
                     hsd_obj = YearlyHillStationDistance.objects.get(year=year, hill=trp.hill)
                 except:
                     messages.info(request, f"Please in parameter page, for the hill {trp.hill}, enter the distance to the related station.")    
-                    return redirect('reciept')
+                    return redirect('receipt')
                 try:
                     ydp_obj = YearlyDistancePrice.objects.get(year=year, distance=hsd_obj.distance)
                 except:
@@ -260,7 +257,7 @@ def receipt_view(request):
                 print(f"Transportation price: {trp_price}")
             gas_tax = total_price*gas_charge.gas_charge
             final_price = gas_tax*total_price
-            return render(request, "receipt.html", {'form': form, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
+            return render(request, "receipt.html", {'form': form, 'driver': driver, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
     else:
         form = ReceiptForm()
     return render(request, "receipt.html", {'form': form})#, 'driver_trp':driver_trps})

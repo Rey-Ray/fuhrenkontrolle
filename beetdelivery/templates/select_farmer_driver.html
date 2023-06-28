@@ -30,12 +30,6 @@
 
 <form method="POST">
     {% csrf_token %}
-    <!-- <div class="button-container">
-        <div class="my-button">{{ form.hill }}</div>
-        <div class="my-button">{{ form.driver }}</div>
-        <button type="submit" name="action" value="time" class="my-button">Submit</button>
-    </div> -->
-    <!-- {{ form|as_row }} -->
     {% for field in form %}
         <div class="form-row">
         {{ field.label_tag }} {{ field }} {{ field.errors }}

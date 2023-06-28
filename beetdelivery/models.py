@@ -56,7 +56,7 @@ class Hill(models.Model):
 
 class Schedule(models.Model):
     #year = models.ForeignKey(Year, on_delete=models.CASCADE)
-    year = models.IntegerField(unique=True, default=2023)
+    year = models.IntegerField(default=2023)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     drivers = models.ManyToManyField(Driver)
     hills = models.ManyToManyField(Hill)
@@ -64,7 +64,7 @@ class Schedule(models.Model):
 class DailySchedule(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     pending = models.BooleanField(default=False)
-    date = models.DateField()
+    date = models.DateField() # year should be the same as schedule
     def __str__(self):
         return f'{self.date} x {self.pending}'    
 
@@ -75,7 +75,7 @@ class Transportation(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
     arrival_time = models.TimeField(default=datetime.now)
-    container_size = models.IntegerField(null=True, blank = True)
+    container_size = models.IntegerField()
     saved = models.BooleanField(default=False)
     
 class YearlyGasCharge(models.Model):
