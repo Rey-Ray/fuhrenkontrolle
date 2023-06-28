@@ -62,7 +62,7 @@ INTERNAL_IPS = [
 ]
 ROOT_URLCONF = 'driversWebApp.urls'
 
-CSRF_TRUSTED_ORIGINS = ['fuhrenkontrolle.habee.ch', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://fuhrenkontrolle.habee.ch', 'http://127.0.0.1']
 
 TEMPLATES = [
     {
