@@ -3,7 +3,7 @@
 <!-- {% load custom_tags %} -->
 
 {% block styles %}
-<style>
+<!-- <style>
     .form-row {
         display: inline-block;
         margin-right: 10px;
@@ -23,48 +23,64 @@
         padding-top: 25px;
     }
 
-</style>
+</style> -->
 {% endblock %}
 
 {% block content %}
 
-<form method="POST">
+<form method="POST" class="row mt-5">
     {% csrf_token %}
     {% for field in form %}
-        <div class="form-row">
-        {{ field.label_tag }} {{ field }} {{ field.errors }}
+    {%if field.name == 'container_size' %}
+    <div class="col-2">
+        {%else%}
+        <div class="col-5">
+            {% endif %}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
         </div>
-    {% endfor %}
-    <input type="submit" value="Push">
+        {% endfor %}
+        <div class="row justify-content-center mt-5" style="height:70px;">
+            <input type="submit" value="Push" class="btn btn-secondary btn-lg" style="width: 10%; border-radius: 70px;">
+        </div>
 </form>
 
-<table>
-    <thead>
-        <tr>
-            <th>Farmer and Hill</th>
-            <th>Delivered Time</th>
-            <th>Driver</th>
-            <th>Quantity</th>            
-        </tr>
-    </thead>
-    <tbody>
-        {% for trp in transportations %}
-        <tr>
-            <td>{{ trp.hill }}</td>
-            <td>{{ trp.arrival_time }}</td>
-            <td>{{ trp.driver }}</td>
-            <td>{{ trp.container_size }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
-<form action="{% url 'save_schedule' %}" method="POST" class="save_form">
+<div class="row" style="margin-bottom: 400px;">
+    <table class="table mt-5" style="margin-bottom: 200px;">
+        <thead>
+            <tr>
+                <th scope="col">Farmer and Hill</th>
+                <th scope="col">Delivered Time</th>
+                <th scope="col">Driver</th>
+                <th scope="col">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trp in transportations %}
+            <tr>
+                <td>{{ trp.hill }}</td>
+                <td>{{ trp.arrival_time }}</td>
+                <td>{{ trp.driver }}</td>
+                <td>{{ trp.container_size }}</td>
+                <td><button class="btn-dark"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                <td><button class="btn-dark"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<form action="{% url 'save_schedule' %}" method="POST" class="row"
+    style="width:100%; position: fixed; bottom: 0%; z-index: 1000;right: 0%">
     {% csrf_token %}
     <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
-    <input type="submit" value="Save and Close">
+    <div class="row justify-content-center" style="height:70px;">
+        <input type="submit" value="Save and Close" class="btn btn-secondary btn-lg w-100">
+    </div>
 </form>
+
 
 
 {% endblock %}
-
