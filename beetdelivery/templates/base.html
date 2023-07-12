@@ -1,4 +1,6 @@
 {% load static %}
+{% load custom_tags %}
+
 <!DOCTYPE html>
 <html>
 
@@ -31,18 +33,21 @@
 </head>
 
 <body>
-  <ul class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-right: 10px;">
-    <li class="nav-item"><a href="{% url 'home' %}" target="_self" class="nav-link h5 fw-light">Fuherenkontrolle</a>
+  <ul class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-right: 10px; padding-left: 10px;">
     </li>
-    <!-- <li class="nav-item flex-grow-1 padded-nav"><a class="nav-link w-100 text-center">{{ current_time }}</a></li> -->
     {% if request.user.is_authenticated %}
     {% if request.is_manager %}
+    <li class="nav-item"><a href="{% url 'select_year' %}" class="nav-link h5 fw-light">Fuherenkontrolle</a>
     <li class="nav-item"><a href="{% url 'manager_schedule_selection' %}" class="nav-link h5 fw-light">Tageslisten</a>
     </li>
     <li class="nav-item"><a href="{% url 'receipt' %}" class="nav-link h5 fw-light">Abrechnungen</a></li>
-    <li class="nav-item"><a
+    <li class="nav-item"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center h5 fw-light">Parameter</a></li>
+    <!-- <li class="nav-item"><a
         href="{% if year %} {% url 'parameter_year' year %} {% else %} {% url 'parameter' %} {% endif %}"
-        class="nav-link w-100 text-center h5 fw-light">Parameter</a></li>
+        class="nav-link w-100 text-center h5 fw-light">Parameter</a></li> -->
+    {% else %}
+    <li class="nav-item"><a class="nav-link h5 fw-light">Fuherenkontrolle</a>
+    <li class="nav-item flex-grow-1"><a class="nav-link text-center" id="currentTime"></a></li>
     {% endif %}
     <div class="row flex-grow-1 justify-content-end ">
       <li class="nav-item w-25" style="margin-right: 10px;"><a href="{% url 'logout' %}"
@@ -65,10 +70,27 @@
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <!-- <script src="{% static 'formset_js_improved/jquery.formset.js' %}"></script> -->
-
+  <script>
+    function startTime() {
+      var today = new Date();
+      var h = today.getHours();
+      var m = today.getMinutes();
+      var s = today.getSeconds();
+      m = checkTime(m);
+      s = checkTime(s);
+      document.getElementById('currentTime').innerHTML =
+      h + ":" + m + ":" + s;
+      var t = setTimeout(startTime, 500);
+    }
+    function checkTime(i) {
+      if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+      return i;
+    }
+    window.onload = function() { startTime() }
+    </script>
+    
   {% block scripts %}{% endblock %}
 
-  <!-- Add the content of your page here -->
 </body>
 
 </html>

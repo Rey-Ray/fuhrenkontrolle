@@ -9,8 +9,8 @@ from datetime import datetime
 class Ratte(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(default="ratte", max_length=20)
-    def __str__(self):
-        return self.user.username
+    # def __str__(self):
+    #     return self.user.username
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -41,21 +41,15 @@ class Station(models.Model):
 
 
 class Hill(models.Model):
-    location = models.CharField(max_length=50)
+    # location = models.CharField(max_length=50)
     size = models.CharField(max_length=50)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
     def __str__(self):
-        name = self.farmer.first_name + ' ' + self.farmer.last_name + ' | ' + self.location + ' | ' + self.size
+        name = f'{self.farmer.first_name} {self.farmer.last_name}|{self.size}'
         return name
 
 
-# class Year(models.Model):
-#     year = models.IntegerField(unique=True, default=2023)#, validators=[MinValueValidator(2023),MaxValueValidator(2050)])
-#     def __str__(self):
-#         return str(self.year)
-
 class Schedule(models.Model):
-    #year = models.ForeignKey(Year, on_delete=models.CASCADE)
     year = models.IntegerField(default=2023)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     drivers = models.ManyToManyField(Driver)
@@ -70,7 +64,6 @@ class DailySchedule(models.Model):
 
 class Transportation(models.Model):
     ratte = models.ForeignKey(User, on_delete=models.CASCADE)
-    # date = models.DateField()
     daily_schedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
@@ -108,6 +101,3 @@ class YearlyHillStationDistance(models.Model):
     def __str__(self):
         return f'{self.hill} {self.distance}km'
 
-# class Receipt(models.Model):
-#     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
-#     distance_price = models.ManyToManyField(YearlyDistancePrice)

@@ -1,39 +1,27 @@
 {% extends 'base.html' %}
 
 
-
 {% block content %}
-
-<form method="post" action="{% url 'parameter' %}">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="form-field">
-            {{ form.year.label_tag }} <div id="form_select_year">{{ form.year }}</div>
-            <!-- <div id="selected_year" style="display:none">{{ year }}</div> -->
-        </div>        
+<p>Prameters for year {{ year }}:</p>
+<div class="row justify-content-center" style="padding-top: 10%">
+    <div class="row mt-4 justify-content-center">
+        <button id="gas_charge" class="btn btn-secondary btn-lg w-50" style="height:70px;">Gas Charge</button>
     </div>
-    <button type="submit">Select</button>
-</form>
-{% if year %}
-    <div> 
-        <button id="gas_charge">Gas Charge</button>
-        <button id="distance_price_button">Distance Price</button>
-        <button id="stations_exports_button">Station Export</button>
-        <button id="hill_distance_button">Distances</button>
+    <div class="row mt-4 justify-content-center">
+        <button id="distance_price_button" class="btn btn-secondary btn-lg w-50" style="height:70px;">Distance Price</button>
     </div>
-{% endif %}
-<!-- <div class="row">
-    <div class="mt-4 center-content" id="distance_price_div"></div>
-    <div class="mt-4 center-content" id="stations_exports_div"></div>
-    <div class="mt-4 center-content" id="hill_distance_div"></div>
-</div> -->
-
+    <div class="row mt-4 justify-content-center">    
+        <button id="stations_exports_button" class="btn btn-secondary btn-lg w-50" style="height:70px;">Station Export</button>
+    </div>
+    <div class="row mt-4 justify-content-center">
+        <button id="hill_distance_button" class="btn btn-secondary btn-lg w-50" style="height:70px;">Hill Distances</button>
+    </div>
+</div>
 {% endblock %} 
 
 
 {% block scripts %}
 <script>
-    {% if year %}
     document.getElementById("gas_charge").addEventListener("click", function() {
         window.location.href = "{% url 'gas_charge' year %}";
     });
@@ -46,9 +34,7 @@
     document.getElementById("hill_distance_button").addEventListener("click", function() {
         window.location.href = "{% url 'hill_distance' year %}";
     });
-    {% endif %}
 </script>
-
 {% endblock %} 
 
  

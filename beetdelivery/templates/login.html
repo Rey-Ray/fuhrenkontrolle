@@ -1,24 +1,23 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<form method="post" action="{% url 'login' %}" class="row justify-content-center h-100" style="padding-top: 15%;">
-    {% csrf_token %}
 
-    <div class="row p-3 justify-content-center " style="max-width:540px">
-        <div class="col p-2">
-            <div class="col p-3">
+{% block content %}
+
+<form method="post" action="{% url 'login' %}" class="row justify-content-center h-100" style="padding-top: 15%">
+    {% csrf_token %}
+    <div class="row justify-content-center w-50">
+        <div class="col">
+            <div class="col p-3">Username:
                 <input type="text" name="username" placeholder="Username" class="form-control form-control-lg">
             </div>
-            <div class="col p-3">
+            <div class="col p-3">Password:
                 <input type="password" name="password" placeholder="Password" class="form-control form-control-lg">
             </div>
-            <div class="row justify-content-center mt-5" style="height:100px;">
+            <div class="row justify-content-center mt-4" style="height:70px;">
                 <button type="submit" class="btn btn-secondary btn-lg w-50">Login</button>
             </div>
         </div>
     </div>
-
-
 </form>
 
 {% endblock %}

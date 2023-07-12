@@ -1,42 +1,30 @@
 {% extends 'base.html' %}
 
-<!-- {% load custom_tags %} -->
 
 {% block content %}
-
-<style>
-    .form-row {
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    td {
-        padding: 10px;
-    }
-
-</style>
-
-<table>
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Station</th>
-            <th>Ratte</th>            
-        </tr>
-    </thead>
-    <tbody>
-        <!-- schedules is like this: [[daily1, daily2], [daily3]] -->
-        {% for sch in schedules %}
+<p>List of transportations for year {{ year }}:</p>
+<div class="row" style="margin-bottom: 400px;">
+    <table class="table mt-5" style="margin-bottom: 200px;">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Station</th>
+                <th scope="col">Ratte</th>
+            </tr>
+        </thead> 
+        <tbody>
+            {% for sch in schedules %}
             {% for daily in sch %}
                 <tr>
                     <td>{{ daily.date }}</td>
                     <td>{{ daily.schedule.station }}</td>
                     <td>{{ daily.transportation_set.first.ratte }}</td>
-                    <td><a href="{% url 'schedule' daily_id=daily.id %}"> > </a></td>
+                    <td><a href="{% url 'schedule' daily_id=daily.id %}"><i class="fa-solid fa-arrow-right"></i></a></td>
                 </tr>
             {% endfor %}
-        {% endfor %}
-    </tbody>
-</table>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

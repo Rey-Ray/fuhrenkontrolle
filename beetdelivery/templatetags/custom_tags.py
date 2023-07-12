@@ -12,3 +12,12 @@ def as_row(form):
         html += f'<div class="form-row">{field.label_tag()} {field}{field.errors}</div>'
     print(html)
     return html
+
+@register.filter(name='is_manager')
+def is_manager(obj):
+    ans = hasattr(obj, 'manager')
+    return ans
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
