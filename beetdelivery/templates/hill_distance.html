@@ -1,51 +1,29 @@
 {% extends 'base.html' %}
 
-{% block styles %}
-<style>
-    .form-row {
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    th {
-        padding-top: 25px;
-        padding-bottom: 10px;
-    }
-
-    td {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-
-    .save_form {
-        padding-top: 25px;
-    }
-
-</style>
-{% endblock %}
 
 {% block content %}
 
-<form method="POST" method="POST" class="save_form">
+<p>Hills to stations distances for year {{ year }}:</p>
+<form method="POST" method="POST" class="row mt-5 justify-content-center">
     {% csrf_token %}
     {% for field in form %}
-        <div class="form-row">
-        {{ field.label_tag }} {{ field }} {{ field.errors }}
+    <div class="col-5">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
         </div>
     {% endfor %}
-    <input type="submit" value="Save">
+    <div class="row justify-content-center mt-5" style="height:70px;">
+        <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-25">
+    </div>
 </form>
-<!-- 
-<form action="{% url 'save_schedule' %}" method="POST" class="save_form">
-    {% csrf_token %}
-    <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
-    <input type="submit" value="Save and Close">
-</form> -->
-<table>
-    <thead>
+
+<div class="row" style="margin-bottom: 400px;">
+    <table class="table mt-5" style="margin-bottom: 200px;">
+        <thead>
         <tr>
-            <th>Farmer/Hill ID</th>            
-            <th>Distance(km)</th>
+            <th scope="col">Farmer&Hill</th>            
+            <th scope="col">Distance(km)</th>
         </tr>
     </thead>
     <tbody>

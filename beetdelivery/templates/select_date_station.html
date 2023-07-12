@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <h4>Select Date and Station:</h4>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
-  
-{% endblock %}
 
+{% block content %}
+  <div class="row justify-content-center h-100" style="padding-top: 15%">
+    <form method="post" class="w-50">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="row justify-content-center mt-5" style="height:70px;">
+        <button type="submit" class="btn btn-secondary btn-lg w-50">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  {% endblock %}

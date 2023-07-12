@@ -1,70 +1,154 @@
 {% extends 'base.html' %}
 
-<!-- {% load custom_tags %} -->
-
-{% block styles %}
-<style>
-    .form-row {
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    th {
-        padding-top: 25px;
-        padding-bottom: 10px;
-    }
-
-    td {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-
-    .save_form {
-        padding-top: 25px;
-    }
-
-</style>
-{% endblock %}
 
 {% block content %}
 
-<form method="POST">
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="form-row">
-        {{ field.label_tag }} {{ field }} {{ field.errors }}
-        </div>
-    {% endfor %}
-    <input type="submit" value="Push">
+<p>{{ schedule.schedule.station }} {{ schedule.date }}:</p>
+{% if not request.is_manager %}
+<form method="POST" class="row mt-3 justify-content-center">
+{% csrf_token %}
+
+    <div class="col-5">
+        {{ form.hill.label_tag }}
+        {{ form.hill }}
+        {{ form.hill.errors }}
+    </div>
+
+    <div class="col-5">
+        {{ form.driver.label_tag }}
+        {{ form.driver }}
+        {{ form.driver.errors }}
+    </div>
+    
+    <div class="col-2">
+        {{ form.container_size.label_tag }}
+        {{ form.container_size }}
+        {{ form.container_size.errors }}
+    </div>
+
+    <div class="row justify-content-center mt-5" style="height:70px;">
+        <input type="submit" value="Push" class="btn btn-secondary btn-lg" style="width: 15%; border-radius: 50px;">
+    </div>
 </form>
+{% endif %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Farmer and Hill</th>
-            <th>Delivered Time</th>
-            <th>Driver</th>
-            <th>Quantity</th>            
-        </tr>
-    </thead>
-    <tbody>
-        {% for trp in transportations %}
-        <tr>
-            <td>{{ trp.hill }}</td>
-            <td>{{ trp.arrival_time }}</td>
-            <td>{{ trp.driver }}</td>
-            <td>{{ trp.container_size }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row" style="margin-bottom: 400px;">
+    <table class="table mt-5" style="margin-bottom: 200px;">
+        <thead>
+            <tr>
+                <th scope="col">Farmer and Hill</th>
+                <th scope="col">Delivered Time</th>
+                <th scope="col">Driver</th>
+                <th scope="col">Quantity</th>
+            </tr>
+        </thead> 
+        <tbody>
+            {% for trp in transportations %}
+            <tr>
+                <td>{{ trp.hill }}</td>
+                <td>{{ trp.arrival_time }}</td>
+                <td>{{ trp.driver }}</td>
+                <td>{{ trp.container_size }}</td>
+                <!-- <td><a href="{% url 'edit_trp' trp.id %}" class="btn-dark"><i class="fa-solid fa-pen-to-square"></i></button></a></td> -->
 
-<form action="{% url 'save_schedule' %}" method="POST" class="save_form">
+                <!-- <td><a href="{% url 'delete_trp' trp.id %}" class="btn-dark"><i class="fa-solid fa-trash"></i></button></a></td> -->
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editModal{{ trp.id }}">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                
+                    {% for id, edit_form in edit_form %}
+
+                    <div class="modal fade" id="editModal{{ id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Edit Transportation</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="{% url 'edit_trp' trp.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        {{ edit_form.as_p }}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                {% endfor %}
+
+                
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ trp.id }}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+
+                    <div class="modal fade" id="deleteModal{{ trp.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <a href="{% url 'delete_trp' trp.id %}" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if not request.is_manager %}
+<form action="{% url 'save_schedule' %}" method="POST" class="row"
+    style="width:100%; position: fixed; bottom: 0%; z-index: 1000;right: 0%">
     {% csrf_token %}
     <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
-    <input type="submit" value="Save and Close">
+    <div class="row justify-content-center" style="height:70px;">
+        <input type="submit" value="Save and Close" class="btn btn-secondary btn-lg w-100">
+    </div>
 </form>
-
+{% endif %}
 
 {% endblock %}
 
+
+{% block scripts %}
+
+<script>
+
+    document.getElementById("id_driver").addEventListener("change", function() {
+        var selectedDriver = this.value;
+        // Make an AJAX request to fetch the latest container size for the selected driver
+        // Replace the URL with the appropriate endpoint in your backend to retrieve the container size
+        var url = "{% url 'get_latest_container_size' %}?driver=" + selectedDriver;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(2);
+                // Update the container size field with the retrieved value
+                document.getElementById("id_container_size").value = data.latest_container_size;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+</script>
+
+{% endblock %}

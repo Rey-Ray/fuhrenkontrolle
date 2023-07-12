@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <div class="row justify-content-center h-100" style="padding-top: 15%">
-    <form method="post" action="{% url 'gas_charge' year %}" class="w-50">
+    <form method="post" class="w-50">
         {% csrf_token %}
-        {{ year }}
-        {{ form }}
+        {{ form.as_p }}
         <div class="row justify-content-center mt-5" style="height:70px;">
-            <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-50">
+            <button type="submit" class="btn btn-secondary btn-lg w-50">Select</button>
         </div>
     </form>
 </div>
-{% endblock %}
+
+{% endblock %} 

@@ -1,58 +1,46 @@
 {% extends 'base.html' %}
 
-<!-- {% load custom_tags %} -->
-
-{% block styles %}
-<style>
-    
-    .form-row {
-        display: inline-block;
-        margin-right: 10px;
-    }
-
-    th {
-        padding-top: 25px;
-        padding-bottom: 10px;
-    }
-
-    td {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-
-    .save_form {
-        padding-top: 25px;
-    }
-    
-
-</style>
-{% endblock %}
 
 {% block content %}
-
-<form method="POST" id="driver-form">
+<p>year {{ year }}:</p>
+<form method="POST" class="row mt-5 justify-content-center">
     {% csrf_token %}
     {% for field in form %}
-        <div class="form-row">
-
-        {{ field.label_tag }} {{ field }} {{ field.errors }}
+    {% if field.name == 'year' %}
+        <div class="col-2">
+        {% else %}
+        <div class="col-6">
+            {% endif %}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
         </div>
     {% endfor %}
-    <input type="submit" value="Select">
+
+    <div class="row justify-content-center mt-5" style="height:50px;">
+        <input type="submit" value="Select" class="btn btn-secondary btn-lg w-25" >
+    </div>
+    
 </form>
 
+
 {% if driver %}
-<div id="print-content">
-    <h3>Receipt for {{ driver }}</h3>
-    <table>
+
+<!-- 
+<div class="row" style="margin-bottom: 400px;">
+    <table scope="col" style="margin-bottom: 200px;"> -->
+
+<div class="row mt-5" id="print-content">
+    <h4>Receipt for {{ driver }} at year {{ year }}:</h4>
+    <table class="table mt-3">
         <thead>
             <tr>
-                <th>Farmer&Hill</th>
-                <th>Distance(km)</th>
-                <th>DPrice</th>
-                <th>Density(kg/m3)</th>
-                <th>Quantity(m3)</th>
-                <th>Price</th>            
+                <th scope="col">Farmer&Hill</th>
+                <th scope="col">km</th>
+                <th scope="col">CHF*km</th>
+                <th scope="col">kg/m <sup>3</sup></th>
+                <th scope="col">m <sup>3</sup></th>
+                <th scope="col">CHF</th>            
             </tr>
         </thead>
         <tbody>
@@ -64,17 +52,21 @@
                 <td>{{ price.3 }}</td>
                 <td>{{ price.4 }}</td>
                 <td>{{ price.5 }}</td>
-
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <div><p>Total Price: {{total_price}}</p></div>
-    <div><p>Gas Tax: {{gas_tax}}</p></div>
-    <div><p>Final Amount: {{final_price}}</p></div>
+    <div class="row mt-5">
+        <p>Total Price: {{total_price}}</p>
+        <p>Gas Tax: {{gas_tax}}</p>
+        <p>Final Amount: {{final_price}}</p>
+    </div>
 </div>
 
-<button id="print-button" class="btn btn-primary" >Print</button>
+<div class="row mt-3 justify-content-center" style="height:50px;">
+    <button id="print-button" class="btn btn-secondary btn-lg w-100"" >Print</button>
+</div>
+
 {% endif %}
 
 <script>
@@ -94,13 +86,5 @@
             alert("Please select a driver before printing.");
         }   
     });
-
-    // document.getElementById("print-button").addEventListener("click", function() {
-    //    var printContent = document.getElementById("print-content").innerHTML;
-    //    var originalContent = document.body.innerHTML
-    //    document.body.innerHTML = printContent;
-    //    window.print();
-    //    document.body.innerHTML = originalContent;
-    // });
 </script>
 {% endblock %}
