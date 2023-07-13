@@ -3,7 +3,7 @@
 at the main forlder (where manage.py exists), there should be a folder named 'data'. in this directory there should exist csv files by these names:
 
 drivers/
-farmers&hills/
+farmers_hills/
 stations
 
 the first row is the header of each coloumn:
