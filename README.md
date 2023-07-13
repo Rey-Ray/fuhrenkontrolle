@@ -17,7 +17,7 @@ drivers: Station, Name, Locatoin
 farmers_hills: Station, Name, Size
 /Name is the farmers name.
 
-If a driver works for several station, it should has several rows, one for each station.
+If a driver works for several station, it should has several rows, one for each station. And just the default container size.
 
 
 
