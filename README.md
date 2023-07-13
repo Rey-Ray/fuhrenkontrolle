@@ -10,12 +10,11 @@ the first row is the header of each coloumn:
 
 Station: Name
 
-driver: Name, Locatoin
+driver: Station, Name, Locatoin
 
-farmers&hills: Name, Size
+farmers_hills: Station, Name, Size
 
-Inside data_year a folder with name 'schedule' exists. For each station, there exist two csv files: 'station name_hills', 'station name_drivers'. The format is the same as previous.
-
+If a driver works for several station, it should has several rows, one for each station.
 
 
 
