@@ -8,7 +8,7 @@ stations
 
 the first row is the header of each coloumn:
 
-Station: Name
+station: Name
 
 drivers: Station, Name, Locatoin
 
