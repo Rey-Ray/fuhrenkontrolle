@@ -3,35 +3,35 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
-# class User(models.Model):
-#     user_name = models.CharField(max_length=50)
 
 class Ratte(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(default="ratte", max_length=20)
-    # def __str__(self):
-    #     return self.user.username
+    def __str__(self):
+         return self.user.username
+
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(default='manager', max_length=20)
+    def __str__(self):
+         return self.user.username
 
 
 class Driver(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    location = models.CharField(max_length=50, blank=True, null=True)
+    container_size = models.FloatField(blank=True, null=True)
     #telephone = models.IntegerField()
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.name}'
 
 
 class Farmer(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     #telephone = models.IntegerField()
-    #email = models.EmailField(unique=True)
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.name}'
 
 
 class Station(models.Model):
@@ -41,26 +41,30 @@ class Station(models.Model):
 
 
 class Hill(models.Model):
-    # location = models.CharField(max_length=50)
     size = models.CharField(max_length=50)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
     def __str__(self):
-        name = f'{self.farmer.first_name} {self.farmer.last_name}|{self.size}'
+        name = f'{self.farmer.name}|{self.size}'
         return name
 
 
 class Schedule(models.Model):
-    year = models.IntegerField(default=2023)
+    year = models.IntegerField()
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     drivers = models.ManyToManyField(Driver)
     hills = models.ManyToManyField(Hill)
+    def __str__(self):
+        name = f'{self.station} {self.year}'
+        return name
+    
 
 class DailySchedule(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     pending = models.BooleanField(default=False)
     date = models.DateField() # year should be the same as schedule
     def __str__(self):
-        return f'{self.date} x {self.pending}'    
+        return f'{self.date} {self.schedule.station} x {self.pending}'    
+
 
 class Transportation(models.Model):
     ratte = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -68,25 +72,30 @@ class Transportation(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
     arrival_time = models.TimeField(default=datetime.now)
-    container_size = models.IntegerField()
+    container_size = models.FloatField()
     saved = models.BooleanField(default=False)
     
+
+#################################### Manager ####################################
+    
 class YearlyGasCharge(models.Model):
-    year = models.IntegerField(unique=True, default=2023)
+    year = models.IntegerField(unique=True)
     gas_charge = models.FloatField(choices=[(r,r) for r in range(-99, 100)])
     def __str__(self):
         return f'{self.year} {self.gas_charge}'
 
 
 class YearlyStationExport(models.Model):
-    year = models.IntegerField(default=2023)
+    year = models.IntegerField()
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     total_tons = models.FloatField(default=0)
     density = models.FloatField(default=0)
+    def __str__(self):
+        return f'{self.year} {self.station}'
 
 
 class YearlyDistancePrice(models.Model):
-    year = models.IntegerField(default=2023)
+    year = models.IntegerField()
     distance = models.IntegerField(default=0)
     price = models.FloatField(default=0)
     def __str__(self):
@@ -94,10 +103,10 @@ class YearlyDistancePrice(models.Model):
 
 
 class YearlyHillStationDistance(models.Model):
-    year = models.IntegerField(default=2023)
+    year = models.IntegerField()
     # station = models.ForeignKey(Schedule, on_delete=models.CASCADE, null=True)
     hill = models.ForeignKey(Hill, on_delete=models.CASCADE)
     distance = models.IntegerField(default=0)    
     def __str__(self):
-        return f'{self.hill} {self.distance}km'
+        return f'{self.year} {self.hill} {self.distance}km'
 

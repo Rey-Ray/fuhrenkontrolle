@@ -62,7 +62,6 @@ def schedule_selection_view(request):
                 daily_obj = DailySchedule.objects.get_or_create(schedule=schedule_obj, date=date)[0]
                 daily_obj.pending = True
                 daily_obj.save()
-                # print(daily_obj)
 
             except Schedule.DoesNotExist:
                 messages.error(request, "No hills are planned to be transfered to this station in this year!")
