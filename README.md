@@ -9,13 +9,13 @@ stations
 the first row is the header of each coloumn:
 
 stations: Year, Name
-year is just at the first row.
+/year is just at the first row.
 
 drivers: Station, Name, Locatoin
-Name is the driver or the company name.
+/Name is the driver or the company name.
 
 farmers_hills: Station, Name, Size
-Name is the farmers name.
+/Name is the farmers name.
 
 If a driver works for several station, it should has several rows, one for each station.
 
