@@ -44,7 +44,7 @@ class Hill(models.Model):
     size = models.CharField(max_length=50)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
     def __str__(self):
-        name = f'{self.farmer.name}|{self.size}'
+        name = f'{self.farmer.name} | {self.size}'
         return name
 
 

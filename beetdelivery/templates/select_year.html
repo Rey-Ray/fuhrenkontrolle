@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center h-100" style="padding-top: 15%">
+<div class="row h-100" style="padding-top: 10%">
     <form method="post" class="w-50">
         {% csrf_token %}
         {{ form.as_p }}
-        <div class="row justify-content-center mt-5" style="height:70px;">
-            <button type="submit" class="btn btn-secondary btn-lg w-50">Select</button>
-        </div>
+        <button type="submit" class="btn btn-secondary btn-lg w-50 mt-5" style="height:70px;">Select</button>
     </form>
 </div>
 

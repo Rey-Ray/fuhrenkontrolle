@@ -37,6 +37,7 @@ LOGIN_URL = 'login'
 
 INSTALLED_APPS = [
     'bootstrap5',
+    'django_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -10,7 +10,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic.edit import DeleteView, UpdateView
-
+import json
+from django.utils import timezone
 from .decorators import manager_required, set_role
 from .forms import (DateStationForm, ReceiptForm, TransportationForm, YearForm,
                     YearlyDistancePriceForm, YearlyGasChargeForm,
@@ -19,6 +20,7 @@ from .models import (DailySchedule, Driver, Farmer, Hill, Schedule, Station,
                      Transportation, YearlyDistancePrice, YearlyGasCharge,
                      YearlyHillStationDistance, YearlyStationExport)
 
+import time
 
 def home(request):###############################
     return redirect('schedule_selection')
@@ -84,28 +86,25 @@ def select_farmer_driver_view(request, daily_id):
             transportation.ratte = user
             transportation.save()
             return redirect('schedule', daily_id=daily_id)
-            
     else:
         transportations = Transportation.objects.filter(daily_schedule=daily_id).all().order_by('-id')        
-        edit_form = [(trp.id, TransportationForm(daily_schedule=daily_obj, instance=trp)) for trp in transportations]
-
         if transportations:
-            latest_hill = Transportation.objects.filter(ratte=user).order_by('-id').values_list('hill', flat=True).first()
+            latest_hill = transportations.first().hill#Transportation.objects.filter(ratte=user).order_by('-id').values_list('hill', flat=True).first()
         
         else:
             latest_hill = None
         form = TransportationForm(daily_schedule=daily_obj,  initial={'hill': latest_hill})
-
+    recent_drivers = [x.driver for x in transportations.model.objects.filter(daily_schedule=daily_obj)]
     context = {
         'form': form,
         'transportations': transportations,
-        'schedule': daily_obj,
-        'edit_form': edit_form
+        'schedule': daily_obj,  
         }
     return render(request, 'select_farmer_driver.html', context)
 
 
 def get_latest_container_size_view(request):
+    print("This is called")
     selected_driver = request.GET.get('driver')
     latest_container_size = Transportation.objects.filter(driver=selected_driver).order_by('-id').values_list('container_size', flat=True).first()
     return JsonResponse({'latest_container_size': latest_container_size})
@@ -119,15 +118,15 @@ def delete_trp_view(request, trp_id):
 
 def edit_trp_view(request, trp_id):
     trp = get_object_or_404(Transportation, id=trp_id)
-    if request.method == 'POST':
-        form = TransportationForm(request.POST, instance=trp)
-        if form.is_valid():
-            form.save()
-            return redirect('schedule', daily_id=trp.daily_schedule.id)
-    
-    edit_form = TransportationForm(instance=trp)#initial={'hill': trp.hill, 'container_size': trp.container_size, 'driver': trp.driver})
-    return render(request, 'select_farmer_driver.html', {'edit_form': edit_form, 'schedule': trp.daily_schedule.id})
 
+    if request.method == 'POST':
+        edit_form = TransportationForm(request.POST, instance=trp)
+        if edit_form.is_valid():
+            edit_form.save()
+            return redirect('schedule', daily_id=trp.daily_schedule.id)
+    else:
+        edit_form = TransportationForm(instance=trp)
+    return render(request, 'edit_transportation_form.html', {'edit_form': edit_form, 'trp_id': trp.id})
 
 @login_required
 @set_role
@@ -147,16 +146,20 @@ def save_schedule_view(request):
     
 ###########################################
 # Manager views:
-@manager_required
-@set_role
-def manager_schedules_view(request):
+
+def chosen_year(request):
     try:
         year = request.session.get('year', timezone.now().year)
     except:
         year = timezone.now().year
+    return year
 
+@manager_required
+@set_role
+def manager_schedules_view(request):
+    year = chosen_year(request)
     schedules = Schedule.objects.filter(year=year)
-    daily_schedules = [sch.dailyschedule_set.all().order_by('-date') for sch in schedules]
+    daily_schedules = [sch.dailyschedule_set.all() for sch in schedules]
     return render(request, 'manager_schedules.html', {'schedules':daily_schedules, 'year':year})
 
 
@@ -168,7 +171,7 @@ def select_year_view(request):
         if form.is_valid():
             year = form.cleaned_data['year']
             request.session['year'] = year
-            messages.info(request, f" Year {year} is selected.")
+            messages.info(request, f" The chosen year is {year}")
             return redirect('select_year')
     else:
         try:
@@ -224,6 +227,13 @@ def distance_price_view(request, year):
     return render(request, 'distance_price.html', context)
 
 
+def delete_dp_view(request, dp_id):
+    dp = YearlyDistancePrice.objects.get(pk=dp_id)
+    dp.delete()
+    year = chosen_year(request)
+    return redirect('distance_price', year)
+
+
 @manager_required
 @set_role
 def stations_exports_view(request, year):
@@ -242,7 +252,7 @@ def stations_exports_view(request, year):
                     total_volume += Transportation.objects.filter(daily_schedule=daily_schedule).aggregate(Sum('container_size'))['container_size__sum'] or 0
             
             # Calculate the density
-            density = export / total_volume if total_volume > 0 else 0
+            density = round(export / total_volume,2) if total_volume > 0 else 0
 
             try:
                 yse_obj = YearlyStationExport.objects.get(year=year, station=station)
@@ -255,6 +265,12 @@ def stations_exports_view(request, year):
         form = YearlyStationExportForm()
     all_se = YearlyStationExport.objects.filter(year=year).order_by('station')
     return render(request, "stations_exports.html", {'form': form, 'all_se': all_se, 'year':year})
+
+def delete_se_view(request, se_id):
+    se = YearlyStationExport.objects.get(pk=se_id)
+    se.delete()
+    year = chosen_year(request)
+    return redirect('stations_exports', year)
 
 
 @manager_required
@@ -274,8 +290,14 @@ def hill_station_distance_view(request, year):
                 YearlyHillStationDistance.objects.create(year=year, hill=hill, distance=distance)
     else:
         form = YearlyHillStationDistanceForm()
-    all_hsd = YearlyHillStationDistance.objects.filter(year=year)#.order_by('hill')
+    all_hsd = YearlyHillStationDistance.objects.filter(year=year).order_by('hill')
     return render(request, "hill_distance.html", {'form': form, 'all_hsd': all_hsd, 'year': year})
+
+def delete_hd_view(request, hd_id):
+    hd = YearlyHillStationDistance.objects.get(pk=hd_id)
+    hd.delete()
+    year = chosen_year(request)
+    return redirect('hill_distance', year)
 
 
 @manager_required
@@ -290,7 +312,7 @@ def gas_charge_view(request, year):
                 gas_charge = YearlyGasCharge.objects.get(year=year)
                 gas_charge.gas_charge = charge
                 gas_charge.save()
-                messages.info(request, f"Gas charge for {year} is set to {charge}")
+                messages.info(request, f"Gas charge for {year} is set to {charge}%")
             except:
                 YearlyGasCharge.objects.create(year=year, gas_charge=charge)
             # return redirect('parameter_year', year=year)
@@ -306,6 +328,8 @@ def receipt_view(request):
         year = request.session.get('year', timezone.now().year)
     except:
         year = timezone.now().year
+
+    # driver_names = json.dumps([driver.name for driver in Driver.objects.all().order_by('name')])
 
     if request.method == "POST":
         form = ReceiptForm(request.POST)
@@ -339,14 +363,20 @@ def receipt_view(request):
                     messages.info(request, f"Please in parameter page, set distance.")
                 
                     return redirect('receipt')
-                trp_price = ydp_obj.price*yse_obj.density*trp.container_size/1000
+                trp_price = round(ydp_obj.price*yse_obj.density*trp.container_size/1000, 2)
                 total_price += trp_price
                 prices.append( (trp.hill, hsd_obj.distance, ydp_obj.price, yse_obj.density, trp.container_size, trp_price) )
-            gas_tax = total_price*gas_charge.gas_charge
-            final_price = gas_tax*total_price
+            gas_tax = round(total_price*gas_charge.gas_charge, 2)
+            final_price = round(gas_tax*total_price, 2)
             return render(request, "receipt.html", {'form': form, 'year': year, 'driver': driver, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
     else:
         form = ReceiptForm()
     return render(request, "receipt.html", {'form': form, 'year': year})#, 'driver_trp':driver_trps})
 
 
+
+
+def driver_search(request):
+    query = request.GET.get('query', '')
+    drivers = list(Driver.objects.filter(name__icontains=query).values_list('name', flat=True))
+    return JsonResponse(drivers, safe=False)

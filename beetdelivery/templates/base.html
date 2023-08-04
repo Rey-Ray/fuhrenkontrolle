@@ -1,75 +1,125 @@
-{% load static %}
-{% load custom_tags %}
-
 <!DOCTYPE html>
-<html>
-
+<html  class="notranslate" translate="no">
 <head>
-  <title>Beet Delivery</title>
+  {% load static %}
+  {% load custom_tags %}
   {% load bootstrap5 %}
   {% bootstrap_css %}
-  {% bootstrap_javascript %}
-  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-  <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
-  <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>
-  <script src="{% static 'fontawesomefree/js/brands.js' %}"></script>
+  <title>Beet Delivery</title>  
+
   <style>
     html,
     body {
       margin: 0;
       height: 100vh;
     }
-
+    .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: dark;
+    padding-right: 10px;
+    padding-left: 10px;
+    }
+    .nav-item.active .nav-link{
+      color: grey;
+      text-decoration: underline;
+    }
     .nav-link {
       color: whitesmoke;
     }
-
     .nav-link:hover {
       color: grey;
+    }
+    .no-hover:hover{
+      color: whitesmoke;
+    }
+    .messages {
+      list-style-type: none;
+      font-weight: bold;
+      margin-top: 5%;
+    }
+    .table-container {
+        max-height: 50%;
+        overflow-y: scroll;
+        background-color: white;
+    }
+    .table-container thead th {
+        background-color: white; /* Set the background color of the table header */
+        position: sticky;
+        top: 0;
+        z-index: 1; /* Ensure the table header is above other elements */
+    }
+    .table-container table {
+        position: relative; /* Needed for z-index to work */
+    }
+    .table th,
+    .table td {
+        text-align: left;
+        vertical-align: middle;
+    }
+    .table td:last-child {
+      text-align: right; /* Align the last column (trash button) to the right */
     }
   </style>
 </head>
 
 <body>
-  <ul class="navbar navbar-expand-sm navbar-dark bg-dark" style="padding-right: 10px; padding-left: 10px;">
-    </li>
+  <ul class="navbar bg-dark">
+    <li><a class="nav-link h5 fw-light no-hover">Fuherenkontrolle</a></li>
     {% if request.user.is_authenticated %}
     {% if request.is_manager %}
-    <li class="nav-item"><a href="{% url 'select_year' %}" class="nav-link h5 fw-light">Fuherenkontrolle</a>
-    <li class="nav-item"><a href="{% url 'manager_schedule_selection' %}" class="nav-link h5 fw-light">Tageslisten</a>
-    </li>
-    <li class="nav-item"><a href="{% url 'receipt' %}" class="nav-link h5 fw-light">Abrechnungen</a></li>
-    <li class="nav-item"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center h5 fw-light">Parameter</a></li>
-    <!-- <li class="nav-item"><a
-        href="{% if year %} {% url 'parameter_year' year %} {% else %} {% url 'parameter' %} {% endif %}"
-        class="nav-link w-100 text-center h5 fw-light">Parameter</a></li> -->
+      {% url 'manager_schedule_selection' as manager_schedule_selection_url %}
+      <li class="nav-item {% if request.path == manager_schedule_selection_url %} active {% endif %}"><a href="{{ manager_schedule_selection_url }}" class="nav-link h5 fw-light">Tageslisten</a></li>
+      {% url 'receipt' as receipt %}
+      <li class="nav-item {% if request.path == receipt %} active {% endif %}"><a href="{% url 'receipt' %}" class="nav-link h5 fw-light">Abrechnungen</a></li>
+      {% url 'parameter' as parameter %}
+      <li class="nav-item {% if request.path == parameter %} active {% endif %}"><a href="{% url 'parameter' %}" class="nav-link w-100 text-center h5 fw-light">Parameter</a></li>
     {% else %}
-    <li class="nav-item"><a class="nav-link h5 fw-light">Fuherenkontrolle</a>
-    <li class="nav-item flex-grow-1"><a class="nav-link text-center" id="currentTime"></a></li>
+      <li class="nav-item"><a class="nav-link" id="currentTime"></a></li>
     {% endif %}
-    <div class="row flex-grow-1 justify-content-end ">
-      <li class="nav-item w-25" style="margin-right: 10px;"><a href="{% url 'logout' %}"
-          class="nav-link w-100 text-center h5 fw-light">Logout</a>
-      </li>
-    </div>
+      <li class="nav-item" style="margin-right: 10px;"><a href="{% url 'logout' %}" class="nav-link h5 fw-light">Logout</a></li>
     {% endif %}
-
   </ul>
-
-  <div class="container" style="height:90%">
+  <div class="container" style="height:80%; padding-left:0; padding-right:0;">
     {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    <!-- <div class="row"> -->
+      <ul class="messages" >
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
         {% endfor %}
-    </ul>
+      </ul>
+    <!-- </div> -->
     {% endif %}
     {% block content %} {% endblock %}
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <!-- <script src="{% static 'formset_js_improved/jquery.formset.js' %}"></script> -->
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<!-- Bootstrap JavaScript -->
+{% bootstrap_javascript %}
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js" integrity="sha512-yDlE7vpGDP7o2eftkCiPZ+yuUyEcaBwoJoIhdXv71KZWugFqEphIS3PU60lEkFaz8RxaVsMpSvQxMBaKVwA5xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+<!-- Select2 JavaScript -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- FontAwesome -->
+  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+  <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
+  <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>
+  <script src="{% static 'fontawesomefree/js/brands.js' %}"></script>
+  <script>
+$(document).ready(function() {
+    $('.select2').select2();
+});
+  </script>
+  {% block scripts %}{% endblock %}
+  
+  {% if not request.is_manager %}
   <script>
     function startTime() {
       var today = new Date();
@@ -78,8 +128,7 @@
       var s = today.getSeconds();
       m = checkTime(m);
       s = checkTime(s);
-      document.getElementById('currentTime').innerHTML =
-      h + ":" + m + ":" + s;
+      document.getElementById('currentTime').innerHTML = h + ":" + m + ":" + s;
       var t = setTimeout(startTime, 500);
     }
     function checkTime(i) {
@@ -87,10 +136,7 @@
       return i;
     }
     window.onload = function() { startTime() }
-    </script>
-    
-  {% block scripts %}{% endblock %}
-
+  </script>
+  {% endif %}
 </body>
-
 </html>

@@ -2,14 +2,12 @@
 
 {% block content %}
 
-<div class="row justify-content-center h-100" style="padding-top: 15%">
-    <form method="post" action="{% url 'gas_charge' year %}" class="w-50">
+<div class="row h-100" style="padding-top: 10%">
+    <form method="post" class="w-50">
         {% csrf_token %}
-        {{ year }}
+        Gas cahrge for {{ year }}[%]:
         {{ form }}
-        <div class="row justify-content-center mt-5" style="height:70px;">
-            <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-50">
-        </div>
+        <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-50 mt-5" style="height:70px;">
     </form>
 </div>
 {% endblock %}

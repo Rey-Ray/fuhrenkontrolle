@@ -1,37 +1,59 @@
 {% extends 'base.html' %}
-
-
 {% block content %}
-<p>Staiton exports for year {{ year }}:</p>
-<form method="POST" class="row mt-5 justify-content-center">
+
+<h5 style="padding-top: 5%">Station Export for {{ year }}</h5>
+<form method="POST" class="row mt-5">
     {% csrf_token %}
     {% for field in form %}
         <div class="col-5">
-        {{ field.label_tag }}
-        {{ field }}
-        {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
         </div>
     {% endfor %}
-    <div class="row justify-content-center mt-5" style="height:70px;">
-        <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-25">
+    <div class="row mt-5" style="height:70px;">
+        <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-25" style="margin-left: 12px;">
     </div>
 </form>
 
-<div class="row" style="margin-bottom: 400px;">
-    <table class="table mt-5" style="margin-bottom: 200px;">
-        <thead>
+<div class="table-container">
+    <table class="table">
+        <thead style="position: sticky; top: 0;">
             <tr>
-                <th scope="col">Station</th>
-                <th scope="col">Exported(t)</th>  
-                <th scope="col">Density(t/m <sup>3</sup>)</th>
+                <th scope="col", style="width: 33%;">Station</th>
+                <th scope="col", style="width: 33%;">Exported[t]</th>  
+                <th scope="col", style="width: 33%;">Density[t/m <sup>3</sup>]</th>
             </tr>
-        </thead> 
-        <tbody>
+        </thead>
+        <tbody class="table-body" style="max-height: 40%; overflow-y: scroll;">
             {% for se in all_se %}
             <tr>
                 <td>{{ se.station }}</td>
                 <td>{{ se.total_tons }}</td>
                 <td>{{ se.density }}</td>
+            <td>
+                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ se.id }}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+
+                <div class="modal fade" id="deleteModal{{ se.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{% url 'delete_se' se.id %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

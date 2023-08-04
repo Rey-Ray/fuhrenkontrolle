@@ -2,16 +2,31 @@
 
 
 {% block content %}
-<p>List of transportations for year {{ year }}:</p>
-<div class="row" style="margin-bottom: 400px;">
-    <table class="table mt-5" style="margin-bottom: 200px;">
-        <thead>
+<div class="table-container">
+    <table class="table">
+        <thead style="position: sticky; top: 0;">
             <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Station</th>
-                <th scope="col">Ratte</th>
+                <th scope="col">
+                    Date
+                    <select class="filter-select" data-column="0">
+                        <option value="">All Dates</option>
+                    </select>
+                </th>
+                <th scope="col">
+                    Station
+                    <select class="filter-select" data-column="1">
+                        <option value="">All Stations</option>
+                    </select>
+                </th>
+                <th scope="col">
+                    Ratte
+                    <select class="filter-select" data-column="2">
+                        <option value="">All Ratte</option>
+                    </select>
+                </th>
+                <th scope="col">Action</th>
             </tr>
-        </thead> 
+        </thead>
         <tbody>
             {% for sch in schedules %}
             {% for daily in sch %}
@@ -27,4 +42,45 @@
     </table>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+            // Function to populate the filter select options dynamically
+            function populateFilters(columnIndex) {
+                var uniqueValues = [];
+                $('table tbody tr').each(function() {
+                    var filterValue = $($(this).find('td')[columnIndex]).text();
+                    if ($.inArray(filterValue, uniqueValues) === -1) {
+                        uniqueValues.push(filterValue);
+                        $('.filter-select[data-column="' + columnIndex + '"]').append($('<option>', {
+                            value: filterValue,
+                            text: filterValue
+                        }));
+                    }
+                });
+            }
+
+            // Populate filters for each column
+            populateFilters(0); // Date
+            populateFilters(1); // Station
+            populateFilters(2); // Ratte
+
+            // Event listener for the filter select
+            $(".filter-select").change(function() {
+                var selectedValue = $(this).val();
+                var columnIndex = $(this).data('column');
+
+                $("table tbody tr").each(function() {
+                    var rowValue = $($(this).find('td')[columnIndex]).text();
+                    if (selectedValue === "" || selectedValue === rowValue) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+</script>
 {% endblock %}

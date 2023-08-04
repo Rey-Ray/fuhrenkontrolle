@@ -13,12 +13,12 @@ def import_data():
     hills_csv_file = 'data/farmers_hills.csv'
     stations_csv_file = 'data/stations.csv'
 
-
     # adding stations
     sf = pd.read_csv(stations_csv_file)
+    year = int(sf.iloc[0, 0])
+    sf = sf.sort_values('Name')
     for index, row in sf.iterrows():
         Station_name = row['Name']
-
         existing_station = Station.objects.filter(station_name=Station_name).first()
         if existing_station:
             station = existing_station
@@ -27,16 +27,15 @@ def import_data():
             station = Station.objects.create(station_name=Station_name)
             print(f"Added station: {station.station_name}")
 
-    year = int(sf.iloc[0, 0])
 
     # adding drivers
     df = pd.read_csv(drivers_csv_file)
+    df = df.sort_values('Name')
     for index, row in df.iterrows():
         driver_station = row['Station']
         driver_name = row['Name']
         driver_location = row['Location']
         driver_container_size = row['Container_size']
-
         # Check if a driver with the same name and location already exists
         existing_driver = Driver.objects.filter(name=driver_name, location=driver_location, container_size=driver_container_size).first()
         if existing_driver:
@@ -50,16 +49,13 @@ def import_data():
         schedule, created = Schedule.objects.get_or_create(year=year, station=station)
         schedule.drivers.add(driver)
 
-        
-
-
     # adding farmers and hills
     hf = pd.read_csv(hills_csv_file)
+    hf = hf.sort_values('Name')
     for index, row in hf.iterrows():
         farmer_name = row['Name']
-        hill_size = row['Size']
+        hill_size = row['Size'].replace(',','.')
         hill_station = row['Station']
-
         existing_farmer = Farmer.objects.filter(name=farmer_name).first()
         if existing_farmer:
             farmer = existing_farmer
@@ -80,8 +76,6 @@ def import_data():
         station, created = Station.objects.get_or_create(station_name=hill_station)
         schedule, created = Schedule.objects.get_or_create(year=year, station=station)
         schedule.hills.add(hill)
-
-    
     
     print('Data import completed.')
 
