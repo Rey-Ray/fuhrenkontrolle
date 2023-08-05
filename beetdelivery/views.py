@@ -392,6 +392,7 @@ def receipt_view(request):
                 trp_price = round(ydp_obj.price*yse_obj.density*trp.container_size/1000, 2)
                 total_price += trp_price
                 prices.append( (trp.hill, hsd_obj.distance, ydp_obj.price, yse_obj.density, trp.container_size, trp_price) )
+            total_price = round(total_price,2)
             gas_tax = round(total_price*gas_charge.gas_charge/100, 2)
             final_price = round(total_price+gas_tax, 2)
             return render(request, "receipt.html", {'form': form, 'year': year, 'driver': driver, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})

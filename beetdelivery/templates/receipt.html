@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<h5>year {{ year }}:</hf>
+<p>year {{ year }}</p>
 <form method="POST" class="row mt-5">
     {% csrf_token %}
     {{ form.as_p }}
@@ -11,7 +11,7 @@
 {% if driver %}
 
 <div class="row mt-5" id="print-content">
-    <h4>Receipt for {{ driver }} at year {{ year }}:</h4>
+    <h5>Receipt for {{ driver }} at year {{ year }}</h5>
     <table class="table mt-3">
         <thead>
             <tr>
