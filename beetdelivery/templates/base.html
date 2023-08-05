@@ -13,18 +13,22 @@
       margin: 0;
       height: 100vh;
     }
+
     .navbar {
+    position: sticky;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: dark;
-    padding-right: 10px;
-    padding-left: 10px;
+    top: 0;
+    z-index: 1;
     }
+
     .nav-item.active .nav-link{
       color: grey;
       text-decoration: underline;
     }
+    
     .nav-link {
       color: whitesmoke;
     }
@@ -40,27 +44,31 @@
       margin-top: 5%;
     }
     .table-container {
+        margin-top: 5%;
         max-height: 50%;
-        overflow-y: scroll;
+        overflow-y: auto;
         background-color: white;
+        padding-bottom: 80px;
     }
     .table-container thead th {
-        background-color: white; /* Set the background color of the table header */
+        background-color: white; 
         position: sticky;
         top: 0;
-        z-index: 1; /* Ensure the table header is above other elements */
+        z-index: 1;
     }
     .table-container table {
-        position: relative; /* Needed for z-index to work */
+        position: relative;
     }
     .table th,
     .table td {
         text-align: left;
         vertical-align: middle;
+        /* border: 1px solid #ccc; */
     }
-    .table td:last-child {
-      text-align: right; /* Align the last column (trash button) to the right */
-    }
+
+    /* .table td:last-child {
+      text-align: right;
+    } */
   </style>
 </head>
 

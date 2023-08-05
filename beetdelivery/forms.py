@@ -57,8 +57,8 @@ class YearlyStationExportForm(forms.Form):
 
 
 class YearlyHillStationDistanceForm(forms.Form):
-        hill = forms.ModelChoiceField(queryset=Hill.objects.all().order_by('farmer'), widget = forms.Select(attrs={'class': 'form-select form-select-lg p-3'}))
-        distance = forms.FloatField(widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
+        hill = forms.ModelChoiceField(label="Farmer | Hill", queryset=Hill.objects.all().order_by('farmer'), widget = forms.Select(attrs={'class': 'select2 form-select form-select-lg'}))
+        distance = forms.FloatField(label="Distance[km]", widget=forms.NumberInput(attrs={'class':'col form-control'}))
 
 
 # class ReceiptForm(forms.Form):
@@ -78,6 +78,6 @@ class YearlyHillStationDistanceForm(forms.Form):
 class ReceiptForm(forms.Form):
     driver = forms.ModelChoiceField(
         queryset=Driver.objects.all().order_by('name'),
-        widget=forms.Select(attrs={'class': 'select2 form-select p-3'})
+        widget=forms.Select(attrs={'class': 'select2 form-select'})
     )
 

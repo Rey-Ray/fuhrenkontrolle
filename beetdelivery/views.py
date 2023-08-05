@@ -22,6 +22,18 @@ from .models import (DailySchedule, Driver, Farmer, Hill, Schedule, Station,
 
 import time
 
+# def edit_view(request, id):
+#     obj = get_object_or_404(Transportation, id=id)
+#     if request.method == 'POST':
+#         edit_form = TransportationForm(request.POST, instance=obj)
+#         if edit_form.is_valid():
+#             edit_form.save()
+#             return redirect('schedule', daily_id=obj.daily_schedule.id)
+#     else:
+#         edit_form = TransportationForm(instance=obj)
+#     return render(request, 'editor.html', {'edit_form': edit_form, 'id': obj.id})
+
+
 def home(request):###############################
     return redirect('schedule_selection')
 
@@ -226,6 +238,19 @@ def distance_price_view(request, year):
         }
     return render(request, 'distance_price.html', context)
 
+def edit_dp_view(request, dp_id):
+    year = chosen_year(request)
+    dp = get_object_or_404(YearlyDistancePrice, id=dp_id)
+    if request.method == 'POST':
+        edit_form = YearlyDistancePriceForm(request.POST, instance=dp)
+        if edit_form.is_valid():
+            edit_form.save()
+            return redirect('distance_price', year)
+    else:
+        edit_form = YearlyDistancePriceForm(instance=dp)
+    url_name = 'editor'
+    return render(request, 'editor.html', {'edit_form': edit_form, 'obj_id': dp_id, 'url_name': url_name})
+
 
 def delete_dp_view(request, dp_id):
     dp = YearlyDistancePrice.objects.get(pk=dp_id)
@@ -340,7 +365,7 @@ def receipt_view(request):
             try:
                 gas_charge = YearlyGasCharge.objects.get(year=year)
             except:
-                messages.info(request, f"Please in parameter page, enter the Gas charge for the year {year} if it is not zero.")    
+                messages.info(request, f"Please in parameter page, enter the Gas charge for the year {year} if it is not zero")    
                 return redirect('receipt')
 
             total_price = 0
@@ -350,24 +375,25 @@ def receipt_view(request):
                 try:
                     yse_obj = YearlyStationExport.objects.get(year=year, station=trp_station)
                 except:
-                    messages.info(request, f"Please in parameter page, enter yearly station export.")    
+                    messages.info(request, f"In parameter page, enter the exported amount of station {trp_station}")    
                     return redirect('receipt')
                 try:
                     hsd_obj = YearlyHillStationDistance.objects.get(year=year, hill=trp.hill)
+                    try:
+                        ydp_obj = YearlyDistancePrice.objects.get(year=year, distance=hsd_obj.distance)
+                    except:
+                        messages.info(request, f"In parameter page, set price for distance {hsd_obj.distance} km")
+                        return redirect('receipt')
+
                 except:
-                    messages.info(request, f"Please in parameter page, for the hill {trp.hill}, enter the distance to the related station.")    
+                    messages.info(request, f"In parameter page, for the hill {trp.hill}, enter the distance to the related station")    
                     return redirect('receipt')
-                try:
-                    ydp_obj = YearlyDistancePrice.objects.get(year=year, distance=hsd_obj.distance)
-                except:
-                    messages.info(request, f"Please in parameter page, set distance.")
-                
-                    return redirect('receipt')
+
                 trp_price = round(ydp_obj.price*yse_obj.density*trp.container_size/1000, 2)
                 total_price += trp_price
                 prices.append( (trp.hill, hsd_obj.distance, ydp_obj.price, yse_obj.density, trp.container_size, trp_price) )
-            gas_tax = round(total_price*gas_charge.gas_charge, 2)
-            final_price = round(gas_tax*total_price, 2)
+            gas_tax = round(total_price*gas_charge.gas_charge/100, 2)
+            final_price = round(total_price+gas_tax, 2)
             return render(request, "receipt.html", {'form': form, 'year': year, 'driver': driver, 'prices': prices, 'gas_tax': gas_tax, 'total_price': total_price, 'final_price': final_price})
     else:
         form = ReceiptForm()

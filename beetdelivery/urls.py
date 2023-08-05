@@ -18,6 +18,7 @@ urlpatterns = [
     path('parameter/<year>/', views.parameter_year_view, name='parameter_year'),
     path('gas-charge/<year>/', views.gas_charge_view, name='gas_charge'),    
     path('distance-price/<year>/', views.distance_price_view, name='distance_price'),
+    path('dp-edit/<int:dp_id>/', views.edit_dp_view, name='edit_dp'),
     path('dp-delete/<int:dp_id>/', views.delete_dp_view, name='delete_dp'),
     path('stations-exports/<year>/', views.stations_exports_view, name='stations_exports'),
     path('se-delete/<int:se_id>/', views.delete_se_view, name='delete_se'),
@@ -25,4 +26,5 @@ urlpatterns = [
     path('hd-delete/<int:hd_id>/', views.delete_hd_view, name='delete_hd'),    
     path('receipt/', views.receipt_view, name='receipt'),
     path('api/driver_search/', views.driver_search, name='driver_search'),
+    path('edit/<int:dp_id>/', views.edit_dp_view, name='editor'),
 ]
