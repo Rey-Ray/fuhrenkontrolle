@@ -5,49 +5,44 @@
     {% csrf_token %}
     {{ form.as_p }}
     <div class="row mt-4" style="height:50px;">
-        <input type="submit" value="Select" class="btn btn-secondary btn-lg w-25" >
+        <input type="submit" value="Select" class="btn btn-secondary btn-lg w-25" style="margin-left: 12px;">
     </div>
 </form>
 {% if driver %}
-
-<div class="row mt-5" id="print-content">
-    <h5>Receipt for {{ driver }} at year {{ year }}</h5>
+<div class="row mt-2" id="print-content" style="padding-bottom: 150px;">
+<h5 class="mt-4">Receipt for {{ driver }} at year {{ year }}</h5>
     <table class="table mt-3">
-        <thead>
+        <thead style="position: sticky; top:0;">
             <tr>
                 <th scope="col">Farmer | Hill</th>
-                <th scope="col">km</th>
-                <th scope="col">CHF*km</th>
-                <th scope="col">kg/m <sup>3</sup></th>
+                <th scope="col">Tarif[CHF/t]</th>
+                <th scope="col">Export [kg/m<sup>3</sup>]</th>
                 <th scope="col">Quantity [m <sup>3</sup>]</th>
+                <th scope="col">Number of trips</th> <!-- New Count Column -->
+                <th scope="col">Total quantity [m <sup>3</sup>]</th>
                 <th scope="col">Amount [CHF]</th>            
             </tr>
         </thead>
         <tbody>
             {% for price in prices %}
                 <tr>
-                    <td>{{ price.0 }}</td>
-                    <td>{{ price.1 }}</td>
-                    <td>{{ price.2 }}</td>
-                    <td>{{ price.3 }}</td>
-                    <td>{{ price.4 }}</td>
-                    <td>{{ price.5 }}</td>
+                    {% for i in price %}
+                        <td>{{ i }}</td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <table class="table-container mt-2" style="margin-bottom: 100px;">
+    <table class="table-container mt-2" style="" >
         <tbody>
-            <tr><td class="col-6"></td><td>Subtotal:</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
-            <tr><td class="col-6"></td><td>Gas tag:</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
-            <tr><td class="col-6"></td><td>Total:</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
+            <tr><td class="col-6"></td><td>Subtotal</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
+            <tr><td class="col-6"></td><td>Gas tag {{ gas_charge }}%</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
+            <tr><td class="col-6"></td><td>Total</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
         </tbody>
     </table>
 </div>
 
-
-
-<div class="row mt-3" style="height:60px; width:38%; position: fixed; bottom: 0%; z-index: 10;right: 15%; bottom: 3%";>
+<div class="row mt-5" style="height:60px; width:38%; position: fixed; bottom: 0%; z-index: 10;right: 15%; bottom: 3%;">
     <button id="print-button" class="btn btn-secondary btn-lg w-100" >Print</button>
 </div>
 {% endif %}

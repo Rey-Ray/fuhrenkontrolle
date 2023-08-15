@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<h5 style="padding-top: 5%">The chosen year is {{ year }}</h5>
 <div class="row h-100" style="padding-top: 10%">
     <form method="post" class="w-50">
         {% csrf_token %}

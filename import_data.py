@@ -17,7 +17,7 @@ def import_data():
     sf = pd.read_csv(stations_csv_file)
     year = int(sf.iloc[0, 0])
     sf = sf.sort_values('Name')
-    for index, row in sf.iterrows():
+    for row in sf.iterrows():
         Station_name = row['Name']
         existing_station = Station.objects.filter(station_name=Station_name).first()
         if existing_station:
@@ -27,11 +27,10 @@ def import_data():
             station = Station.objects.create(station_name=Station_name)
             print(f"Added station: {station.station_name}")
 
-
     # adding drivers
     df = pd.read_csv(drivers_csv_file)
     df = df.sort_values('Name')
-    for index, row in df.iterrows():
+    for row in df.iterrows():
         driver_station = row['Station']
         driver_name = row['Name']
         driver_location = row['Location']
