@@ -22,6 +22,7 @@
             <tr>
                 <th scope="col", style="width: 33%;">Station</th>
                 <th scope="col", style="width: 33%;">Exported[t]</th>  
+                <th scope="col", style="width: 33%;">Volume[m <sup>3</sup>]</th>  
                 <th scope="col", style="width: 33%;">Density[t/m <sup>3</sup>]</th>
                 <th scope="col", style="width: 33%;">Delete</th>
 
@@ -32,6 +33,7 @@
             <tr>
                 <td>{{ se.station }}</td>
                 <td>{{ se.total_tons }}</td>
+                <td>{{ se.total_volume }}</td>
                 <td>{{ se.density }}</td>
             <td>
                 <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ se.id }}">

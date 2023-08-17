@@ -271,15 +271,16 @@ def stations_exports_view(request, year):
                 daily_schedules = DailySchedule.objects.filter(schedule=schedule)
                 for daily_schedule in daily_schedules:
                     total_volume += Transportation.objects.filter(daily_schedule=daily_schedule).aggregate(Sum('container_size'))['container_size__sum'] or 0
-            
+            print(".................................",total_volume)
             density = round(export / total_volume,2) if total_volume > 0 else 0
             try:
                 yse_obj = YearlyStationExport.objects.get(year=year, station=station)
                 yse_obj.total_tons = export
                 yse_obj.density = density
+                yse_obj.total_volume = total_volume
                 yse_obj.save()
             except:
-                YearlyStationExport.objects.create(year=year, station=station, total_tons=export, density=density)
+                YearlyStationExport.objects.create(year=year, station=station, total_tons=export, density=density, total_volume=total_volume)
     else:
         form = YearlyStationExportForm()
     all_se = YearlyStationExport.objects.filter(year=year).order_by('station')
@@ -402,8 +403,6 @@ def receipt_view(request):
     else:
         form = ReceiptForm()
     return render(request, "receipt.html", {'form': form, 'year': year})#, 'driver_trp':driver_trps})
-
-
 
 
 def driver_search(request):

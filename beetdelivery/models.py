@@ -90,6 +90,7 @@ class YearlyStationExport(models.Model):
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     total_tons = models.FloatField(default=0)
     density = models.FloatField(default=0)
+    total_volume = models.FloatField(default=0)
     def __str__(self):
         return f'{self.year} {self.station}'
 

@@ -12,15 +12,15 @@
 <div class="row mt-2" id="print-content" style="padding-bottom: 150px;">
 <h5 class="mt-4">Receipt for {{ driver }} at year {{ year }}</h5>
     <table class="table mt-3">
-        <thead style="position: sticky; top:0;">
+        <thead>
             <tr>
-                <th scope="col">Farmer | Hill</th>
+                <th scope="col">Farmer|Hill</th>
                 <th scope="col">Tarif[CHF/t]</th>
-                <th scope="col">Export [kg/m<sup>3</sup>]</th>
-                <th scope="col">Quantity [m <sup>3</sup>]</th>
-                <th scope="col">Number of trips</th> <!-- New Count Column -->
-                <th scope="col">Total quantity [m <sup>3</sup>]</th>
-                <th scope="col">Amount [CHF]</th>            
+                <th scope="col">Density[t/m<sup>3</sup>]</th>
+                <th scope="col">Quantity[m <sup>3</sup>]</th>
+                <th scope="col">Number_of_trips</th> <!-- New Count Column -->
+                <th scope="col">Total_quantity [m <sup>3</sup>]</th>
+                <th scope="col">Amount[CHF]</th>            
             </tr>
         </thead>
         <tbody>
@@ -33,11 +33,11 @@
             {% endfor %}
         </tbody>
     </table>
-    <table class="table-container mt-2" style="" >
+    <table class="table-container mt-2" >
         <tbody>
-            <tr><td class="col-6"></td><td>Subtotal</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
-            <tr><td class="col-6"></td><td>Gas tag {{ gas_charge }}%</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
-            <tr><td class="col-6"></td><td>Total</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
+            <tr><td class="col-3">Subtotal</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
+            <tr><td class="col-3">Gas tag {{ gas_charge }}%</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
+            <tr><td class="col-3">Total</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
         </tbody>
     </table>
 </div>
