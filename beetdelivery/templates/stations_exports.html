@@ -16,15 +16,16 @@
     </div>
 </form>
 
+<div id="modal-container"></div>
 <div class="table-container">
     <table class="table">
         <thead style="position: sticky; top: 0;">
             <tr>
                 <th scope="col", style="width: 33%;">Station</th>
                 <th scope="col", style="width: 33%;">Exported[t]</th>  
-                <th scope="col", style="width: 33%;">Volume[m <sup>3</sup>]</th>  
-                <th scope="col", style="width: 33%;">Density[t/m <sup>3</sup>]</th>
-                <th scope="col", style="width: 33%;">Delete</th>
+                <th scope="col", style="width: 33%;">Volume[m<sup>3</sup>]</th>  
+                <th scope="col", style="width: 33%;">Density[kg/m<sup>3</sup>]</th>
+                <!-- <th scope="col", style="width: 33%;"> </th> -->
 
             </tr>
         </thead>
@@ -35,7 +36,12 @@
                 <td>{{ se.total_tons }}</td>
                 <td>{{ se.total_volume }}</td>
                 <td>{{ se.density }}</td>
-            <td>
+                <td>
+                    <button type="button" class="btn" onclick="loadEditForm({{ se.id }})">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </td>
+                <td>
                 <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ se.id }}">
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -65,4 +71,18 @@
 </div>
 
 {% endblock %}
-
+{% block scripts %}
+<script>
+    function loadEditForm(seId) {
+        var url = "{% url 'edit_se' 999 %}".replace('999', seId);
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                var modalContainer = document.getElementById('modal-container');
+                modalContainer.innerHTML = html;
+                var myModal = new bootstrap.Modal(document.getElementById('editModal' + seId));
+                myModal.show();
+            });
+    };
+</script>
+{% endblock %}

@@ -45,14 +45,23 @@ class YearlyGasChargeForm(forms.Form):
     gas_charge = forms.FloatField(label=False, widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
 
 
+CURRENCY_CHOICES = [
+    ('EUR', 'Euro (EUR)'),
+    ('CHF', 'Swiss Franc (CHF)'),
+]
+
+class CurrencyForm(forms.Form):
+    currency = forms.ChoiceField(choices=CURRENCY_CHOICES, widget=forms.RadioSelect(attrs={'class': 'form-check form-check-inline p-3'}))
+
+
 class YearlyDistancePriceForm(forms.Form):
-        distance = forms.IntegerField(label='Distance[km]', widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
-        price = forms.FloatField(label='Price[CHF]', widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
+    distance = forms.IntegerField(label='Distance[km]', widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
+    price = forms.FloatField(widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
 
 
 class YearlyStationExportForm(forms.Form):
-        station = forms.ModelChoiceField(queryset=Station.objects.all().order_by('station_name'), widget=forms.Select(attrs={'class': 'form-select form-select-lg p-3'}))
-        export = forms.FloatField(label="Exported weight[t]",widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
+    station = forms.ModelChoiceField(queryset=Station.objects.all().order_by('station_name'), widget=forms.Select(attrs={'class': 'form-select form-select-lg p-3'}))
+    export = forms.FloatField(label="Exported weight[t]",widget=forms.NumberInput(attrs={'class':'col form-control form-control-lg p-3'}))
 
 
 
@@ -61,23 +70,20 @@ class YearlyHillStationDistanceForm(forms.Form):
         distance = forms.FloatField(label="Distance[km]", widget=forms.NumberInput(attrs={'class':'col form-control'}))
 
 
-# class ReceiptForm(forms.Form):
-#     driver = forms.ModelChoiceField(queryset=Driver.objects.all().order_by('name'),
-#                                     widget=forms.Select(
-#                                          attrs={
-#                                               'class':'col form-control form-control-lg p-3'}))
-
-# class ReceiptForm(forms.Form):
-#     driver = forms.ModelChoiceField(
-#         queryset=Driver.objects.all().order_by('name'),
-#         widget=forms.Select(
-#             attrs={'class': 'selectpicker', 'data-live-search': 'true'}
-#         )
-#     )
-
 class ReceiptForm(forms.Form):
     driver = forms.ModelChoiceField(
         queryset=Driver.objects.all().order_by('name'),
-        widget=forms.Select(attrs={'class': 'select2 form-select'})
+        widget=forms.Select(attrs={'class': 'select2'})
     )
+
+    station = forms.ModelChoiceField(
+        queryset=Station.objects.all().order_by('station_name'),
+        widget=forms.Select(attrs={'class': 'select2 form-select-lg'}),
+        required=False  # Make the field not required
+    )
+
+    # def __init__(self, *args, **kwargs):
+    #     super(ReceiptForm, self).__init__(*args, **kwargs)
+    #     extra_choice = [('', 'All Stations')]
+    #     self.fields['station'].choices = list(self.fields['station'].choices)[:1] + extra_choice + list(self.fields['station'].choices)[1:]
 

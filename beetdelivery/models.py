@@ -21,7 +21,7 @@ class Manager(models.Model):
 class Driver(models.Model):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50, blank=True, null=True)
-    container_size = models.FloatField(blank=True, null=True)
+    container_size = models.FloatField(default=0)
     #telephone = models.IntegerField()
     def __str__(self):
         return f'{self.name}'
@@ -99,8 +99,9 @@ class YearlyDistancePrice(models.Model):
     year = models.IntegerField()
     distance = models.IntegerField(default=0)
     price = models.FloatField(default=0)
+    currency = models.CharField(max_length=5)
     def __str__(self):
-        return f'{self.year} {self.distance}km: {self.price} CHF/t'
+        return f'{self.year} {self.distance}km {self.price} {self.currency}/t'
 
 
 class YearlyHillStationDistance(models.Model):

@@ -1,11 +1,11 @@
-<div class="modal fade" id="editModal{{ obj_id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal{{ se_id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Transportation</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Price of Distance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="{% url url_name obj_id %}">
+            <form method="POST" action="{% url 'edit_se' se_id %}">
                 {% csrf_token %}
                 <div class="modal-body">
                     {{ edit_form.as_p }}

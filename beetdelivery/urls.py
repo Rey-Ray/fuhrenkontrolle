@@ -16,15 +16,20 @@ urlpatterns = [
     path('select-year/', views.select_year_view, name='select_year'),
     path('parameter/', views.parameter_view, name='parameter'),
     path('parameter/<year>/', views.parameter_year_view, name='parameter_year'),
-    path('gas-charge/<year>/', views.gas_charge_view, name='gas_charge'),    
-    path('distance-price/<year>/', views.distance_price_view, name='distance_price'),
+    path('gas-charge/<year>/', views.gas_charge_view, name='gas_charge'),   
+    
+    path('select_currency/<year>', views.currency_selection, name='select_currency'),
+    path('distance_price/<str:currency>/', views.distance_price_view, name='distance_price'),
+    #path('distance-price/<year>/', views.distance_price_view, name='distance_price'),
     path('dp-edit/<int:dp_id>/', views.edit_dp_view, name='edit_dp'),
     path('dp-delete/<int:dp_id>/', views.delete_dp_view, name='delete_dp'),
+
     path('stations-exports/<year>/', views.stations_exports_view, name='stations_exports'),
+    path('se-edit/<int:se_id>/', views.edit_se_view, name='edit_se'),
     path('se-delete/<int:se_id>/', views.delete_se_view, name='delete_se'),
     path('hill-distance/<year>/', views.hill_station_distance_view, name='hill_distance'),
+    path('hd-edit/<int:hd_id>/', views.edit_hd_view, name='edit_hd'),
     path('hd-delete/<int:hd_id>/', views.delete_hd_view, name='delete_hd'),    
     path('receipt/', views.receipt_view, name='receipt'),
     path('api/driver_search/', views.driver_search, name='driver_search'),
-    path('edit/<int:dp_id>/', views.edit_dp_view, name='editor'),
 ]

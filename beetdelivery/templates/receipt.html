@@ -15,12 +15,13 @@
         <thead>
             <tr>
                 <th scope="col">Farmer|Hill</th>
-                <th scope="col">Tarif[CHF/t]</th>
-                <th scope="col">Density[t/m<sup>3</sup>]</th>
-                <th scope="col">Quantity[m <sup>3</sup>]</th>
-                <th scope="col">Number_of_trips</th> <!-- New Count Column -->
-                <th scope="col">Total_quantity [m <sup>3</sup>]</th>
-                <th scope="col">Amount[CHF]</th>            
+                <th scope="col">Distance [km]</th>
+                <th scope="col">Tarif [CHF/t]</th>
+                <th scope="col">Density [kg/m<sup>3</sup>]</th>
+                <th scope="col">Volume [m <sup>3</sup>]</th>
+                <th scope="col">Trips Count</th>
+                <th scope="col">Total Volume</th>
+                <th scope="col">Amount [CHF]</th>            
             </tr>
         </thead>
         <tbody>
@@ -31,13 +32,14 @@
                     {% endfor %}
                 </tr>
             {% endfor %}
+            <tr><td></td><td></td><td></td><td></td><td></td><td>{{num_total_trp}}</td><td>{{total_trp_quantity}}</td></tr>
         </tbody>
     </table>
     <table class="table-container mt-2" >
         <tbody>
-            <tr><td class="col-3">Subtotal</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
-            <tr><td class="col-3">Gas tag {{ gas_charge }}%</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
-            <tr><td class="col-3">Total</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
+            <tr><td class="col-6"></td><td class="col-2">Subtotal</td><td style="text-align-last: right; padding-right: 10%;">{{ total_price }}</td></tr>
+            <tr><td class="col-6"></td><td class="col-2">Gas tag {{ gas_charge }}%</td><td style="text-align-last: right; padding-right: 10%;">{{ gas_tax }}</td></tr>
+            <tr><td class="col-6"></td><td class="col-2">Total</td><td style="text-align-last: right; padding-right: 10%;">{{ final_price }}</tr>
         </tbody>
     </table>
 </div>

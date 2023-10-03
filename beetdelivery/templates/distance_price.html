@@ -4,25 +4,36 @@
 <h5 style="padding-top: 5%">Distances and Prices for {{ year }}</h5>
 <form method="POST" class="row mt-5">
     {% csrf_token %}
-    {% for field in form %}
+    <div class="col-5">
+        <label>Distance[km]:</label>
+        {{ form.distance }}
+        {{ form.distance.errors }}
+    </div>
+    <div class="col-5">
+        <label>Price[{{ currency }}]:</label>
+        {{ form.price }}
+        {{ form.price.errors }}
+    </div>
+    <!-- {% for field in form %}
         <div class="col-5">
             {{ field.label_tag }}
             {{ field }}
             {{ field.errors }}
         </div>
-    {% endfor %}
+    {% endfor %} -->
     <div class="row mt-5" style="height:70px">
         <input type="submit" value="Submit" class="btn btn-secondary btn-lg w-25" style="margin-left: 12px;">
     </div>
 </form>
 
+<div id="modal-container"></div>
 
 <div class="table-container">
     <table class="table", style="table-layout: fixed;">
         <thead style="position: sticky; top: 0;">
             <tr>
                 <th scope="col", style="width:45%">km</th>
-                <th scope="col", style="width:45%">Tarif[CHF/t]</th>
+                <th scope="col", style="width:45%">Tarif[{{currency}}/t]</th>
 
             </tr>
         </thead>
@@ -31,11 +42,11 @@
             <tr>
                 <td>{{ dp.distance }}</td>
                 <td>{{ dp.price }}</td>
-                <!-- <td>
+                <td>
                     <button type="button" class="btn" onclick="loadEditForm({{ dp.id }})">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
-                </td> -->
+                </td>
                 <td>
                     <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ dp.id }}">
                         <i class="fa-solid fa-trash"></i>
@@ -64,18 +75,19 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+{% block scripts %}
 <script>
-function loadEditForm(dpId) {
-    console.log(dpId)
-    var url = "{% url 'editor' 999 %}".replace('999', dpId);
-    fetch(url)
-        .then(response => response.text())
-        .then(html => {
-            var modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = html;
-            var myModal = new bootstrap.Modal(document.getElementById('editModal' + dpId));
-            myModal.show();
-        });
-};
+    function loadEditForm(dpId) {
+        var url = "{% url 'edit_dp' 999 %}".replace('999', dpId);
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                var modalContainer = document.getElementById('modal-container');
+                modalContainer.innerHTML = html;
+                var myModal = new bootstrap.Modal(document.getElementById('editModal' + dpId));
+                myModal.show();
+            });
+    };
 </script>
 {% endblock %}
